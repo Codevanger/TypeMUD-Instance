@@ -1,0 +1,34 @@
+{
+  "compileOnSave": true,
+  "compilerOptions": {
+    "baseUrl": "./",
+    "outDir": "./dist/",
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noImplicitReturns": true,
+    "sourceMap": true,
+    "downlevelIteration": true,
+    "experimentalDecorators": true,
+    "importHelpers": true,
+    "allowSyntheticDefaultImports": true,
+    "declaration": true,
+    "incremental": true,
+    "skipLibCheck": true,
+    "strictNullChecks": false,
+    "noImplicitAny": false,
+    "strictBindCallApply": false,
+    "noFallthroughCasesInSwitch": false,
+    "target": "es2017",
+    "module": "commonjs",
+    "lib": ["es2020"],
+    "paths": {
+      "@core/*": ["src/@core/*"],
+      "@utils/*": ["src/@utils/*"]
+    },
+    "types": ["node"]
+  },
+  "files": ["src/main.ts"],
+  "include": ["src/**/*.d.ts"]
+}
