@@ -24,10 +24,13 @@ export function log(
       console.log(Colors.red("[ERROR]: " + time) + message);
       break;
     case "WARNING":
-      console.log(Colors.yellow("[WARN]: " + time) + message);
+      console.log(Colors.yellow("[WARNING]: " + time) + message);
       break;
     case "INFO":
       console.log(Colors.blue("[INFO]: " + time) + message);
+      break;
+    case "SUCCESS":
+      console.log(Colors.green("[SUCCESS]: " + time) + message);
       break;
     case "DEBUG":
       if (logParams?.showDebugLogs)
@@ -35,7 +38,7 @@ export function log(
       break;
     case "PERFOMANCE":
       if (logParams?.showPerfomanceLogs)
-        console.debug(Colors.brightYellow("[PERFOMANCE]: " + time) + message);
+        console.debug(Colors.cyan("[PERFOMANCE]: " + time) + message);
       break;
     case "EMPTY":
       console.debug("");

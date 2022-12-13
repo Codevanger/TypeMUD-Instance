@@ -29,6 +29,5 @@ export class Test extends CoreModule implements OnClientConnected {
 
   public onClientConnected(listeners: Listeners, _: EmitData | null): void {
     log("DEBUG", "Client connected");
-    log("DEBUG", "Listeners: " + listeners.toString());
   }
 }

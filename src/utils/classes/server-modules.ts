@@ -69,7 +69,7 @@ export class ServerModules {
           break;
       }
 
-      log("INFO", `Module ${module.name} loaded!`);
+      log("SUCCESS", `Module ${module.name} loaded!`);
       checkPerfomance({
         time: moduleStartTime,
         message: `Module ${module.name} loaded in [[time]]`,

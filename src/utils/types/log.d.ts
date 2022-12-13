@@ -6,6 +6,7 @@ export declare type LogLevel =
   | "WARNING"
   | "ERROR"
   | "PERFOMANCE"
+  | "SUCCESS"
   | "EMPTY";
   
 export declare type LogParams = Partial<Params>;

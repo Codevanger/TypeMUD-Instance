@@ -12,7 +12,6 @@ export abstract class BaseModule implements IModule {
   }
 
   protected get loadedModulesNames(): Array<string> {
-    console.log(this.context);
     return this.context.gameServer.modules.loadedModulesNamesIterable;
   }
 
