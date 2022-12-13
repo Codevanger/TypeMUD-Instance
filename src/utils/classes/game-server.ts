@@ -5,7 +5,7 @@ import { ServerModules } from "./server-modules.ts";
 export class GameServer {
   public modules!: ServerModules;
 
-  private context: Context | null = null;
+  private context!: Context;
 
   public initGameServer(context: Context): void {
     this.context = context;

@@ -1,6 +1,6 @@
 import { CoreModule } from "../../utils/classes/module.ts";
 import { Context } from "../../utils/types/context.d.ts";
-import { DB } from "https://deno.land/x/sqlite/mod.ts";
+import { Database, SQLite3Connector } from "https://deno.land/x/denodb/mod.ts";
 import { log } from "../../utils/functions/log.ts";
 
 /**
@@ -9,7 +9,7 @@ import { log } from "../../utils/functions/log.ts";
 export class GameDatabase extends CoreModule {
   public priority = -1;
 
-  private DB!: DB;
+  private DB!: Database;
 
   constructor(protected context: Context) {
     super(context);
@@ -30,13 +30,16 @@ export class GameDatabase extends CoreModule {
 
   private initDB(): void {
     try {
-      this.DB = new DB("db/server.db");
+      const connector = new SQLite3Connector({
+        filepath: "./db/server.db",
+      });
 
-      log("SUCCESS", "Database connected!");
-    }
-    catch (e) {
-      log("ERROR", "Can't connect to database!");
+      this.DB = new Database(connector);
+    } catch (e) {
+      log("ERROR", "Failed to connect to database!");
       log("DEBUG", e.message);
+    } finally {
+      log("SUCCESS", "Database connected!");
     }
   }
 }
