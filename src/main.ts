@@ -19,7 +19,8 @@ class TypeMUD {
       args: this.args,
       params: this.params,
       clients: this.clients,
-      gameServer: this.server
+      gameServer: this.server,
+      version: '0.0.1'
     }
   }
 

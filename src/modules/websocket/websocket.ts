@@ -19,7 +19,6 @@ export class WebSocketTransport extends CoreModule {
     this.canLoad();
 
     this.initWebSocketServer();
-    this.initListeners();
   }
 
   public canLoad(): boolean {
@@ -34,64 +33,5 @@ export class WebSocketTransport extends CoreModule {
 
   private initWebSocketServer(): void {
     this.wsServer = new WebSocketServer(this.context.params?.port);
-  }
-
-  private initListeners(): void {
-    this.initOnConnectedListener();
-  }
-
-  private initOnConnectedListener(): void {
-    // this.wsServer.on("connection", async (connection) => {
-    //   const client = await this.generateClient(connection);
-
-    //   log("INFO", `New client connected via WebSocket! UUID - ${client.uuid}`);
-
-    //   this.context.clients.push(client);
-
-    //   const listeners: Listeners = this.loadedModules
-    //     .filter(
-    //       (module) => module.onClientConnected
-    //     )
-    //     .map((module) => this.context.loadedModules[module].onClientConnected!);
-
-    //   if (listeners && listeners.length > 0) {
-    //     listeners[0](listeners, {
-    //       client,
-    //     });
-    //   }
-
-    //   this.initOnDisconnectedListener(client);
-    // });
-  }
-
-  private initOnDisconnectedListener(client: Client): void {
-    // client.websocket.on("disconnection", () => {
-    //   log("INFO", `Client ${client.uuid} disconnected!`);
-
-    //   const listeners: Listeners = this.context.loadedModulesArray
-    //     .filter(
-    //       (module) => this.context.loadedModules[module].onClientDisconnected
-    //     )
-    //     .map(
-    //       (module) => this.context.loadedModules[module].onClientDisconnected!
-    //     );
-
-    //   if (listeners && listeners.length > 0) {
-    //     listeners[0](listeners, { client });
-    //   }
-
-    //   this.context.clients = this.context.clients.filter(
-    //     (x) => x.uuid !== client.uuid
-    //   );
-    // });
-  }
-
-  private async generateClient(connection: WebSocketClient): Promise<Client> {
-    const client: Client = {
-      uuid: (await generate()) as string,
-      websocket: connection,
-    };
-
-    return client;
   }
 }

@@ -40,7 +40,7 @@ export class GameDatabase extends CoreModule {
   private initDB(): void {
     try {
       const connector = new SQLite3Connector({
-        filepath: "../db/instance.sqlite",
+        filepath: "../db/server.sqlite"
       });
 
       this.DB = new Database(connector);

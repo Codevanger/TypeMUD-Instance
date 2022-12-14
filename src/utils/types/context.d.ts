@@ -8,4 +8,5 @@ export declare interface Context {
   args: Arguments;
   params: ServerParameters | null;
   clients: Array<Client>;
+  version: string;
 }

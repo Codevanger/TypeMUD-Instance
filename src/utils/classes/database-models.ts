@@ -23,6 +23,9 @@ export class User extends Model {
       type: DataTypes.STRING,
       length: 255,
     },
+    role: {
+      type: DataTypes.INTEGER,
+    }
   };
 
   static characters() {
