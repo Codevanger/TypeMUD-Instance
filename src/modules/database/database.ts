@@ -2,6 +2,7 @@ import { CoreModule } from "../../utils/classes/module.ts";
 import { Context } from "../../utils/types/context.d.ts";
 import { Database, SQLite3Connector } from "https://deno.land/x/denodb/mod.ts";
 import { log } from "../../utils/functions/log.ts";
+import { DATABASE_MODELS } from "../../utils/classes/database-models.ts";
 
 /**
  * Module for database connection
@@ -28,10 +29,18 @@ export class GameDatabase extends CoreModule {
     return true;
   }
 
+  public syncDB(): void {
+    log("DEBUG", "Syncing database...");
+
+    this.DB.link(DATABASE_MODELS);
+
+    this.DB.sync({ drop: true });
+  }
+
   private initDB(): void {
     try {
       const connector = new SQLite3Connector({
-        filepath: "./db/server.db",
+        filepath: "../db/instance.sqlite",
       });
 
       this.DB = new Database(connector);

@@ -1,3 +1,4 @@
+import { GameDatabase } from "../../modules/database/database.ts";
 import { checkPerfomance } from "../functions/perfomance.ts";
 import { Context } from "../types/context.d.ts";
 import { ServerModules } from "./server-modules.ts";
@@ -11,7 +12,9 @@ export class GameServer {
     this.context = context;
 
     this.modules = new ServerModules(this.context);
-    this.modules.loadModules()
+    this.modules.loadModules();
+
+    this.syncDB();
 
     this.initServerRefresh();
   }
@@ -19,26 +22,6 @@ export class GameServer {
   private initServerRefresh(): void {
     setInterval(() => {
       const startTime = performance.now();
-
-      // const listeners: Listeners = this.context.loadedModulesArray
-      //   .filter(
-      //     (module) => this.context.loadedModules[module].onServerIteration
-      //   )
-      //   .map((module) => this.context.loadedModules[module].onServerIteration!);
-
-      // if (listeners && listeners.length > 0) {
-      //   listeners[0](listeners, null);
-      // }
-
-      // if (this.context.loadedModules['Queue']) {
-      //   const queue = <Queue>this.context.loadedModules['Queue'];
-
-      //   queue.addCommandToQueue(() => {
-      //     console.log('hi ;)');
-      //   });
-
-      //   log('DEBUG', 'Added command to queue', true);
-      // }
 
       checkPerfomance({
         time: startTime,
@@ -48,5 +31,11 @@ export class GameServer {
         overtime: this.context.params!.refreshRate,
       });
     }, this.context.params!.refreshRate);
+  }
+
+  private syncDB(): void {
+    const GameDatabase = this.modules.coreModules.GameDatabase as GameDatabase;
+
+    GameDatabase.syncDB();
   }
 }
