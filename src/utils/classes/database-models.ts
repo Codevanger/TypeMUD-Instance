@@ -33,6 +33,30 @@ export class User extends Model {
   }
 }
 
+export class Instance extends Model {
+  static table = "instances";
+  static timestamps = true;
+
+  static fields = {
+    id: {
+      primaryKey: true,
+      autoIncrement: true,
+      type: DataTypes.INTEGER,
+    },
+    game_name: {
+      type: DataTypes.STRING,
+      length: 255,
+      unique: true,
+    },
+    url: { 
+      type: DataTypes.STRING,
+      length: 255,
+      unique: true,
+    },
+  };
+
+}
+
 export class Character extends Model {
   static table = "characters";
   static timestamps = true;
@@ -45,7 +69,7 @@ export class Character extends Model {
     },
     name: {
       type: DataTypes.STRING,
-      length: 255,
+      length: 255,  
       unique: true,
     },
   };
@@ -57,4 +81,4 @@ export class Character extends Model {
 
 Relationships.belongsTo(Character, User);
 
-export const DATABASE_MODELS = [User, Character];
+export const DATABASE_MODELS = [User, Character, Instance];

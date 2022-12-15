@@ -10,35 +10,33 @@ export function changeLogParams(params: LogParams): void {
 
 export function log(
   level: LogLevel,
-  message?: string | number,
-  showTime?: boolean
+  message?: string | number
 ): void {
   let time = "";
-  if (showTime) {
-    const date = new Date();
-    time = `${date.toLocaleTimeString()} | `;
-  }
+
+  const date = new Date();
+  time = `${date.toLocaleTimeString()}`;
 
   switch (level) {
     case "ERROR":
-      console.log(Colors.red("[ERROR]: " + time) + message);
+      console.log(`[${Colors.gray(time)}] ` + Colors.red("[ERROR]: ") + message);
       break;
     case "WARNING":
-      console.log(Colors.yellow("[WARNING]: " + time) + message);
+      console.log(`[${Colors.gray(time)}] ` + Colors.yellow("[WARNING]: ") + message);
       break;
     case "INFO":
-      console.log(Colors.blue("[INFO]: " + time) + message);
+      console.log(`[${Colors.gray(time)}] ` + Colors.blue("[INFO]: ") + message);
       break;
     case "SUCCESS":
-      console.log(Colors.green("[SUCCESS]: " + time) + message);
+      console.log(`[${Colors.gray(time)}] ` + Colors.green("[SUCCESS]: ") + message);
       break;
     case "DEBUG":
       if (logParams?.showDebugLogs)
-        console.debug(Colors.magenta("[DEBUG]: " + time) + message);
+        console.debug(`[${Colors.gray(time)}] ` + Colors.magenta("[DEBUG]: ") + message);
       break;
     case "PERFOMANCE":
       if (logParams?.showPerfomanceLogs)
-        console.debug(Colors.cyan("[PERFOMANCE]: " + time) + message);
+        console.debug(`[${Colors.gray(time)}] ` + Colors.cyan("[PERFOMANCE]: ") + message);
       break;
     case "EMPTY":
       console.debug("");
