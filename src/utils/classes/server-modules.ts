@@ -3,19 +3,26 @@ import { log } from "../functions/log.ts";
 import { checkPerfomance } from "../functions/perfomance.ts";
 import { Context } from "../types/context.d.ts";
 import { LoadedModule } from "../types/modules.d.ts";
-import { CoreModule, GameModule, TransportModule } from "./module.ts";
+import {
+  CoreModule,
+  DataModule,
+  GameModule,
+  TransportModule,
+} from "./module.ts";
 
 export class ServerModules {
   public coreModules: Record<string, CoreModule> = {};
   public transportModules: Record<string, TransportModule> = {};
   public gameModules: Record<string, GameModule> = {};
+  public dataModules: Record<string, DataModule> = {};
 
   public get loadedModules(): Record<string, LoadedModule> {
     return {
       ...this.coreModules,
       ...this.transportModules,
-      ...this.gameModules
-    }
+      ...this.gameModules,
+      ...this.dataModules,
+    };
   }
 
   public get loadedModulesIterable(): Array<LoadedModule> {
@@ -23,16 +30,15 @@ export class ServerModules {
       ...Object.values(this.coreModules),
       ...Object.values(this.transportModules),
       ...Object.values(this.gameModules),
+      ...Object.values(this.dataModules),
     ];
   }
-
 
   public get loadedModulesNamesIterable(): Array<string> {
     return this.loadedModulesIterable.map((module) => module.constructor.name);
   }
 
-  constructor(private context: Context) {
-  }
+  constructor(private context: Context) {}
 
   public loadModules(): void {
     if (this.loadedModulesIterable.length > 0) {
@@ -50,23 +56,31 @@ export class ServerModules {
     modulesToLoad.forEach((module) => {
       const moduleStartTime = performance.now();
 
-      log("EMPTY");
-      log("INFO", `Starting loading ${module.name} module...`);
-      const loadedModule = new module(this.context);
+      try {
+        log("EMPTY");
+        log("INFO", `Starting loading ${module.name} module...`);
+        const loadedModule = new module(this.context);
 
-      switch (loadedModule.type) {
-        case "CORE":
-          this.coreModules[module.name] = loadedModule;
-          break;
-        case "TRANSPORT":
-          this.transportModules[module.name] = loadedModule;
-          break;
-        case "GAME":
-          this.gameModules[module.name] = loadedModule;
-          break;
-        default:
-          log("ERROR", "Unknown module type!");
-          break;
+        switch (loadedModule.type) {
+          case "CORE":
+            this.coreModules[module.name] = loadedModule;
+            break;
+          case "TRANSPORT":
+            this.transportModules[module.name] = loadedModule;
+            break;
+          case "GAME":
+            this.gameModules[module.name] = loadedModule;
+            break;
+          case "DATA":
+            this.dataModules[module.name] = loadedModule as DataModule;
+            break;
+          default:
+            log("ERROR", "Unknown module type!");
+            break;
+        }
+      } catch (error) {
+        log("ERROR", `Module ${module.name} loading error!`);
+        log("ERROR", error);
       }
 
       log("SUCCESS", `Module ${module.name} loaded!`);

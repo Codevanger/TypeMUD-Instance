@@ -1,4 +1,3 @@
-import { GameDatabase } from "../../modules/database/database.ts";
 import { checkPerfomance } from "../functions/perfomance.ts";
 import { Context } from "../types/context.d.ts";
 import { ServerModules } from "./server-modules.ts";
@@ -23,6 +22,12 @@ export class GameServer {
     setInterval(() => {
       const startTime = performance.now();
 
+      this.modules.loadedModulesIterable
+        .filter((module) => module.onServerIteration)
+        .forEach((module) => {
+          module.onServerIteration!();
+        });
+
       checkPerfomance({
         time: startTime,
         message: "Server iteration done in [[time]]",
@@ -34,8 +39,10 @@ export class GameServer {
   }
 
   private syncDB(): void {
-    const GameDatabase = this.modules.coreModules.GameDatabase as GameDatabase;
+    for (const module in this.modules.dataModules) {
+      const dataModule = this.modules.dataModules[module];
 
-    GameDatabase.syncDB();
+      dataModule.sync();
+    }
   }
 }

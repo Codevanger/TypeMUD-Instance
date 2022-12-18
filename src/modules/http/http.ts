@@ -1,3 +1,4 @@
+import { serve } from "https://deno.land/std@0.165.0/http/server.ts";
 import { CoreModule } from "../../utils/classes/module.ts";
 import { log } from "../../utils/functions/log.ts";
 import { Context } from "../../utils/types/context.d.ts";
@@ -25,23 +26,29 @@ export class GameHttp extends CoreModule {
     return true;
   }
 
-  private async initHttpServer(): Promise<void> {
-    const server = Deno.listen({ port: 8080 });
-    log("DEBUG", "HTTP server started on port 8080");
+  private initHttpServer(): void {
+    if (!this.context.params?.port) return;
 
-    for await (const conn of server) {
-      const httpConn = Deno.serveHttp(conn);
-
-      for await (const requestEvent of httpConn) {
-        const response = {
-          online: this.context.clients.length,
-          version: this.context.version,
-        };
-
-        requestEvent.respondWith(
-          new Response(JSON.stringify(response), { status: 200 })
-        );
-      }
+    try {
+      serve(this.handler.bind(this), { port: this.context.params.port + 1 });
+      log("DEBUG", `HTTP server started`);
+    } catch (error) {
+      log("ERROR", `Failed to start HTTP server!`);
+      log("ERROR", error);
     }
+  }
+
+  private handler(_: Request): Response {
+    const response = {
+      online: this.context.clients.length,
+      version: this.context.version,
+    };
+
+    return new Response(JSON.stringify(response), {
+      status: 200,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+      },
+    });
   }
 }

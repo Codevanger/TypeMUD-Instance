@@ -1,4 +1,5 @@
 import { log } from "../functions/log.ts";
+import { Client } from "../types/client.d.ts";
 import { Context } from "../types/context.d.ts";
 import { ModuleType, Module, IModule, LoadedModule } from "../types/modules.d.ts";
 
@@ -44,6 +45,28 @@ export abstract class BaseModule implements IModule {
 
     return true;
   }
+
+  /**
+   * Server events
+   */
+  public onServerIteration?: () => void;
+  public onServerStart?: () => void;
+  public onServerStop?: () => void;
+  public onServerRestart?: () => void;
+  /**
+   * Client events
+   */
+  public onClientConnect?: (client: Client) => void;
+  public onClientDisconnect?: (client: Client) => void;
+  public onClientMessage?: (message: string, client: Client) => void;
+  public onClientClose?: (client: Client) => void;
+  public onClientCommand?: (command: string, client: Client) => void;
+  public onClientSave?: (client: Client) => void;
+
+  /**
+   * Character events
+   */
+  public onCharacterCommand?: (command: string, client: Client) => void;
 }
 export abstract class CoreModule extends BaseModule {
   public type: ModuleType = "CORE";
@@ -53,4 +76,11 @@ export abstract class TransportModule extends BaseModule {
 }
 export abstract class GameModule extends BaseModule {
   public type: ModuleType = "GAME";
+}
+
+export abstract class DataModule extends BaseModule {
+  public type: ModuleType = "DATA";
+
+  public abstract save(): void;
+  public abstract sync(): void;
 }

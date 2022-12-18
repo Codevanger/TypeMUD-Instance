@@ -20,8 +20,8 @@ class TypeMUD {
       params: this.params,
       clients: this.clients,
       gameServer: this.server,
-      version: '0.0.1'
-    }
+      version: "0.0.1",
+    };
   }
 
   constructor(args: string[]) {
@@ -29,11 +29,10 @@ class TypeMUD {
   }
 
   private async main(args: Arguments): Promise<void> {
-    await clear();
+    await clear(true);
 
     log("INFO", "Starting server...");
     log("EMPTY");
-
 
     this.params = new ServerParameters(args);
 

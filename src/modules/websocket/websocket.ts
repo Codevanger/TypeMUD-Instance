@@ -1,15 +1,10 @@
-import {
-  WebSocketClient,
-  WebSocketServer,
-} from "https://deno.land/x/websocket@v0.1.4/mod.ts";
-import { generate } from "https://deno.land/std@0.149.0/uuid/v1.ts";
+import { WebSocketServer } from "https://deno.land/x/websocket@v0.1.4/mod.ts";
 
-import { CoreModule } from "../../utils/classes/module.ts";
-import { Client } from "../../utils/types/client.d.ts";
+import { TransportModule } from "../../utils/classes/module.ts";
 import { Context } from "../../utils/types/context.d.ts";
 import { Priority } from "../../utils/types/priority.d.ts";
 
-export class WebSocketTransport extends CoreModule {
+export class WebSocketTransport extends TransportModule {
   private wsServer!: WebSocketServer;
   public priority: Priority = 0;
 
