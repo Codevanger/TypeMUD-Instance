@@ -14,14 +14,14 @@ export class ServerModules {
   public coreModules: Record<string, CoreModule> = {};
   public transportModules: Record<string, TransportModule> = {};
   public gameModules: Record<string, GameModule> = {};
-  public dataModules: Record<string, DataModule> = {};
+  public dataModule!: DataModule;
 
   public get loadedModules(): Record<string, LoadedModule> {
     return {
+      database: this.dataModule,
       ...this.coreModules,
       ...this.transportModules,
       ...this.gameModules,
-      ...this.dataModules,
     };
   }
 
@@ -30,7 +30,7 @@ export class ServerModules {
       ...Object.values(this.coreModules),
       ...Object.values(this.transportModules),
       ...Object.values(this.gameModules),
-      ...Object.values(this.dataModules),
+      this.dataModule,
     ];
   }
 
@@ -72,11 +72,14 @@ export class ServerModules {
             this.gameModules[module.name] = loadedModule;
             break;
           case "DATA":
-            this.dataModules[module.name] = loadedModule as DataModule;
+            if (this.dataModule) {
+              throw new Error("Only one data module can be loaded!");
+            }
+
+            this.dataModule = loadedModule as DataModule;
             break;
           default:
-            log("ERROR", "Unknown module type!");
-            break;
+            throw new Error("Unknown module type!");
         }
       } catch (error) {
         log("ERROR", `Module ${module.name} loading error!`);
@@ -97,6 +100,7 @@ export class ServerModules {
       time: modulesStartTime,
       message: `All modules loaded in [[time]]`,
     });
+
     log("EMPTY");
   }
 }
