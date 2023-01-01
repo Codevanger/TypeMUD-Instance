@@ -47,6 +47,8 @@ export class AuthModule extends CoreModule {
     if (auth) {
       const [, payload] = decode(token) as [unknown, ITokenPayload, unknown];
 
+      this.context.clients.find((x) => x.id === payload.id)?.websocket.close(1000, "ERROR: CONNECTION_INTERFARE");
+
       client.auth = true;
       client.id = payload.id;
       client.websocket.send("AUTH: OK");
