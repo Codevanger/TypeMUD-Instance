@@ -84,11 +84,21 @@ export class WebSocketTransport extends TransportModule {
       socket.on("close", async () => {
         log("DEBUG", `Client ${client.id} disconnected!`);
         if (client.character) {
-          await client.character.save();
+          try {
+            await client.character.update();
+          } catch(e) {
+            log("ERROR", e.message);
+            log("ERROR", "Error while saving character data!");
+          }
         }
 
         if (client.user) {
-          await client.user.save();
+          try {
+            await client.user.update();
+          } catch(e) {
+            log("ERROR", e.message);
+            log("ERROR", "Error while saving user data!");
+          }
         }
 
         this.context.clients = this.context.clients.filter(

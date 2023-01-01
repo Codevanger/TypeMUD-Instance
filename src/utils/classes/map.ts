@@ -32,7 +32,21 @@ export class Location {
   }
 
   public canMoveTo(locationId: number): boolean {
-    return this._exits.includes(locationId);
+    console.log({
+      exits: this._exits,
+      locationId,
+      includes: this._exits.includes(+locationId),
+    });
+    return this._exits.includes(+locationId);
+  }
+
+  public websocketFriendly(): ILocation {
+    return {
+      id: this.id,
+      name: this.name,
+      description: this.description,
+      exits: this._exits,
+    };
   }
 }
 
@@ -47,7 +61,7 @@ export class Map {
   }
 
   public getLocation(locationId: number): Location {
-    const location = this._locations.find((x) => x.id === locationId);
+    const location = this._locations.find((x) => +x.id === +locationId);
 
     return new Location(
       location ? location : VOID_LOCATION,

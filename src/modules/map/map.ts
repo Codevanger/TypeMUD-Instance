@@ -1,10 +1,11 @@
 import { CoreModule } from "../../utils/classes/module.ts";
 import { log } from "../../utils/functions/log.ts";
 import { Context } from "../../utils/types/context.d.ts";
-import { Map, Location } from "../../utils/classes/map.ts";
+import { Map } from "../../utils/classes/map.ts";
 import { IMap, ILocation } from "../../utils/types/map.d.ts";
 import { Client } from "../../utils/types/client.d.ts";
 import { TransportCode } from "../../utils/classes/transport-codes.ts";
+import { Character } from "../../utils/classes/database-models.ts";
 
 /**
  * Map module
@@ -15,7 +16,7 @@ export class GameMap extends CoreModule {
 
   public commandsToAdd = {
     CURRENTLOCATION: this.getCurrentLocation,
-    MOVE: this.moveCharacter
+    MOVE: this.moveCharacter,
   };
 
   constructor(protected context: Context) {
@@ -71,6 +72,12 @@ export class GameMap extends CoreModule {
     return map;
   }
 
+  public onCharacterLogin = (_: Client, character: Character): void => {
+    if (!character.location || character.location === 0) {
+      character.location = this.MAP_OBJECT.bootstrap;
+    }
+  };
+
   public getCurrentLocation(client: Client): void {
     if (!client.auth) {
       client.websocket.send(TransportCode.NOT_AUTHENTICATED.toString());
@@ -86,11 +93,11 @@ export class GameMap extends CoreModule {
       client.character!.location = this.MAP_OBJECT.bootstrap;
     }
 
-    console.log(client.character);
-
     client.websocket.send(
       JSON.stringify(
-        this.MAP_OBJECT.getLocation(client.character!.location as number)
+        this.MAP_OBJECT.getLocation(
+          client.character!.location as number
+        ).websocketFriendly()
       )
     );
   }
@@ -116,8 +123,6 @@ export class GameMap extends CoreModule {
     }
 
     if (!currentLocation.canMoveTo(locationId)) {
-      console.log(locationId, currentLocation);
-
       client.websocket.send(TransportCode.CANT_MOVE_TO.toString());
       return;
     }
@@ -130,6 +135,8 @@ export class GameMap extends CoreModule {
     }
 
     client.character.location = locationId;
+    client.character.update();
+
     client.websocket.send(TransportCode.MOVED.toString());
   }
 }

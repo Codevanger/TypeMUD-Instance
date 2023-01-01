@@ -37,6 +37,8 @@ export class GameDatabase extends DataModule {
 
   public save(): void {
     log("DEBUG", "Saving database...");
+
+    this.DB.sync();
   }
 
   private initDB(): void {

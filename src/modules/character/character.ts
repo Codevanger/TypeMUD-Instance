@@ -58,6 +58,12 @@ export class CharacterModule extends GameModule {
       return;
     }
 
+    this.context.gameServer.modules.loadedModulesIterable
+      .filter((module) => module.onCharacterLogin)
+      .forEach((module) => {
+        module.onCharacterLogin!(client, character);
+      });
+
     client.character = character;
     client.websocket.send(TransportCode.CHARACTER_OK.toString());
   }

@@ -7,6 +7,7 @@ import {
   IModule,
   LoadedModule,
 } from "../types/modules.d.ts";
+import { Character } from "./database-models.ts";
 
 export abstract class BaseModule implements IModule {
   public commandsToAdd?: {
@@ -58,10 +59,11 @@ export abstract class BaseModule implements IModule {
    * Server events
    */
   public onServerIteration?: () => void;
+
   /**
-   * Client events
+   * Character events
    */
-  public onClientSave?: (client: Client) => void;
+  public onCharacterLogin?: (client: Client, character: Character) => void;
 }
 export abstract class CoreModule extends BaseModule {
   public type: ModuleType = "CORE";

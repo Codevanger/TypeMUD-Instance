@@ -53,6 +53,15 @@ export class AuthModule extends CoreModule {
     if (auth) {
       const [, payload] = decode(token) as [unknown, ITokenPayload, unknown];
 
+      const user = await User.where("id", payload.id).first();
+
+      if (!user || user.username !== payload.username) {
+        client.websocket.send(TransportCode.AUTH_FAILED.toString());
+        client.websocket.close(1000, "AUTH FAILED");
+
+        return;
+      }
+
       const interfaringClient = this.context.clients.find((x) => x.id === payload.id);
       if (interfaringClient) {
         interfaringClient.websocket.send(TransportCode.CONNECTION_INTERFERED.toString());
@@ -61,7 +70,7 @@ export class AuthModule extends CoreModule {
 
       client.auth = true;
       client.id = payload.id;
-      client.user = await User.where("id", client.id).first();
+      client.user = user;
       client.websocket.send(TransportCode.AUTH_SUCCESS.toString());
       client.websocket.send(`CLIENT_ID: ${client.id}!`);
     }
