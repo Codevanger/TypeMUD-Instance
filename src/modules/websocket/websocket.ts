@@ -1,6 +1,8 @@
 import { WebSocketServer } from "https://deno.land/x/websocket@v0.1.4/mod.ts";
+import { Character } from "../../utils/classes/database-models.ts";
 
 import { TransportModule } from "../../utils/classes/module.ts";
+import { TransportCode } from "../../utils/classes/transport-codes.ts";
 import { log } from "../../utils/functions/log.ts";
 import { Context } from "../../utils/types/context.d.ts";
 import { Priority } from "../../utils/types/priority.d.ts";
@@ -31,7 +33,7 @@ export class WebSocketTransport extends TransportModule {
     try {
       this.wsServer = new WebSocketServer(this.context.params?.port);
     } catch (e) {
-      log("ERROR", 'Can\'t start WebSocket server!');
+      log("ERROR", "Can't start WebSocket server!");
       log("ERROR", e.message);
 
       throw new Error("Can't start WebSocket server!");
@@ -46,8 +48,9 @@ export class WebSocketTransport extends TransportModule {
         id: 0,
         connectionId: connectionId++,
         websocket: socket,
+        user: null,
         auth: false,
-        character: null
+        character: null,
       });
 
       const client = this.context.clients[this.context.clients.length - 1];
@@ -57,25 +60,46 @@ export class WebSocketTransport extends TransportModule {
           const command = message.split(" ")[0].slice(1).toUpperCase();
           const args = message.split(" ").slice(1);
 
-          log("DEBUG", `Command from client ${this.context.clients.length}: ${command}`)
-          log("DEBUG", `Args from client ${this.context.clients.length}: ${args}`)
+          log(
+            "DEBUG",
+            `Command from client ${this.context.clients.length}: ${command}`
+          );
+          log(
+            "DEBUG",
+            `Args from client ${this.context.clients.length}: ${args}`
+          );
 
-          if (this.context.gameServer.modules.moduleCommands) {
-            this.context.gameServer.modules.moduleCommands[command](client, ...args);
+          if (this.context.gameServer.modules.moduleCommands[command]) {
+            this.context.gameServer.modules.moduleCommands[command](
+              client,
+              ...args
+            );
           } else {
             log("ERROR", `Command ${command} not found`);
-            client.websocket.send("COMMAND: NOT_FOUND");
+            client.websocket.send(TransportCode.COMMAND_NOT_FOUND.toString());
           }
         }
       });
 
-      socket.on("close", () => {
+      socket.on("close", async () => {
         log("DEBUG", `Client ${client.id} disconnected!`);
-        this.context.clients = this.context.clients.filter((x) => x.connectionId !== client.connectionId);
-        console.log({ clients: this.context.clients, client });
+        if (client.character) {
+          await client.character.save();
+        }
+
+        if (client.user) {
+          await client.user.save();
+        }
+
+        this.context.clients = this.context.clients.filter(
+          (x) => x.connectionId !== client.connectionId
+        );
       });
     });
 
-    log("INFO", `WebSocket server started on port ${this.context.params?.port}!`);
+    log(
+      "INFO",
+      `WebSocket server started on port ${this.context.params?.port}!`
+    );
   }
 }

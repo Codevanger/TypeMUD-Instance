@@ -1,5 +1,6 @@
 import { Character } from "../../utils/classes/database-models.ts";
 import { GameModule } from "../../utils/classes/module.ts";
+import { TransportCode } from "../../utils/classes/transport-codes.ts";
 import { Client } from "../../utils/types/client.d.ts";
 import { Context } from "../../utils/types/context.d.ts";
 
@@ -31,33 +32,33 @@ export class CharacterModule extends GameModule {
 
   public async login(client: Client, characterId: number): Promise<void> {
     if (client.character) {
-      client.websocket.send("CHARACTER: ALREADY_LOGGED_IN");
+      client.websocket.send(TransportCode.ALREADY_LOGGED_IN.toString());
       return;
     }
 
     if (!client.auth) {
-      client.websocket.send("AUTH: REQUIRED");
+      client.websocket.send(TransportCode.AUTH_REQUIRED.toString());
       return;
     }
 
     if (characterId < 0) {
-      client.websocket.send("CHARACTER: INVALID_ID");
+      client.websocket.send(TransportCode.INVALID_ID.toString());
       return;
     }
 
     const character = await Character.where("id", characterId).first();
 
     if (!character) {
-      client.websocket.send("CHARACTER: NOT_FOUND");
+      client.websocket.send(TransportCode.NOT_FOUND.toString());
       return;
     }
 
     if (character.userId !== client.id) {
-      client.websocket.send("CHARACTER: INVALID_USER");
+      client.websocket.send(TransportCode.INVALID_USER.toString());
       return;
     }
 
     client.character = character;
-    client.websocket.send("CHARACTER: OK");
+    client.websocket.send(TransportCode.CHARACTER_OK.toString());
   }
 }

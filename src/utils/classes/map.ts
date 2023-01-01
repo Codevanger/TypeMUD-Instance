@@ -1,4 +1,3 @@
-import { Client } from "../types/client.d.ts";
 import { Context } from "../types/context.d.ts";
 import { ILocation, IMap } from "../types/map.d.ts";
 import { Character } from "./database-models.ts";
@@ -31,6 +30,10 @@ export class Location {
       .filter((client) => client.character?.location === this.id)
       .map((client) => client.character!);
   }
+
+  public canMoveTo(locationId: number): boolean {
+    return this._exits.includes(locationId);
+  }
 }
 
 export class Map {
@@ -45,6 +48,7 @@ export class Map {
 
   public getLocation(locationId: number): Location {
     const location = this._locations.find((x) => x.id === locationId);
+
     return new Location(
       location ? location : VOID_LOCATION,
       this,

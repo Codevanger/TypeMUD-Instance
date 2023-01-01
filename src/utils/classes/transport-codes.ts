@@ -1,0 +1,30 @@
+export enum TransportCode {
+    // GENERAL
+    "OK" = 0,
+    "ERROR" = 1,
+    "NOT_IMPLEMENTED" = 2,
+    "COMMAND_NOT_FOUND" = 3,
+
+    // MAP
+    "MOVED" = 1001,
+    "ALREADY_HERE" = 1002,
+    "CANT_MOVE_TO" = 1003,
+    "LOCATION_NOT_FOUND" = 1004,
+    "NOT_AUTHENTICATED" = 1005,
+    "NO_CHARACTER" = 1006,
+
+    //AUTH
+    "AUTH_SUCCESS" = 2001,
+    "AUTH_FAILED" = 2002,
+    "ALREADY_AUTHENTICATED" = 2003,
+    "CONNECTION_INTERFERED" = 2004,
+    "AUTH_OK" = 2005,
+    "AUTH_REQUIRED" = 2006,
+
+    // CHARACTER
+    "ALREADY_LOGGED_IN" = 3001,
+    "INVALID_ID" = 3003,
+    "NOT_FOUND" = 3004,
+    "INVALID_USER" = 3005,
+    "CHARACTER_OK" = 3006
+}

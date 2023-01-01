@@ -5,6 +5,8 @@ import { decode, verify } from "https://deno.land/x/djwt@v2.2/mod.ts"
 import { log } from "../../utils/functions/log.ts";
 import { JWT_SECRET } from "../../utils/consts/secrets.ts";
 import { ITokenPayload } from "../../utils/types/token.d.ts";
+import { TransportCode } from "../../utils/classes/transport-codes.ts";
+import { User } from "../../utils/classes/database-models.ts";
 
 /**
  * Module for authentication
@@ -34,7 +36,7 @@ export class AuthModule extends CoreModule {
 
   public async auth(client: Client, token: string): Promise<void> {
     if (client.auth) {
-      client.websocket.send("AUTH: ALREADY_AUTHENTICATED");
+      client.websocket.send(TransportCode.ALREADY_AUTHENTICATED.toString());
 
       return;
     }
@@ -53,13 +55,14 @@ export class AuthModule extends CoreModule {
 
       const interfaringClient = this.context.clients.find((x) => x.id === payload.id);
       if (interfaringClient) {
-        interfaringClient.websocket.send("AUTH: CONNECTION_INTERFERED");
-        interfaringClient.websocket.close(1000, "AUTH: CONNECTION_INTERFERED");
+        interfaringClient.websocket.send(TransportCode.CONNECTION_INTERFERED.toString());
+        interfaringClient.websocket.close(1000, "CONNECTION INTERFERED");
       }
 
       client.auth = true;
       client.id = payload.id;
-      client.websocket.send("AUTH: OK");
+      client.user = await User.where("id", client.id).first();
+      client.websocket.send(TransportCode.AUTH_SUCCESS.toString());
       client.websocket.send(`CLIENT_ID: ${client.id}!`);
     }
   }
