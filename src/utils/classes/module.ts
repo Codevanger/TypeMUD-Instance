@@ -1,10 +1,17 @@
 import { log } from "../functions/log.ts";
 import { Client } from "../types/client.d.ts";
 import { Context } from "../types/context.d.ts";
-import { ModuleType, Module, IModule, LoadedModule } from "../types/modules.d.ts";
+import {
+  ModuleType,
+  Module,
+  IModule,
+  LoadedModule,
+} from "../types/modules.d.ts";
 
 export abstract class BaseModule implements IModule {
-  public abstract commandsToAdd: { [key: string]: ( ...args: any[] ) => void };
+  public abstract commandsToAdd?: {
+    [key: string]: Function;
+  };
   public abstract type: ModuleType;
 
   public priority = 0;

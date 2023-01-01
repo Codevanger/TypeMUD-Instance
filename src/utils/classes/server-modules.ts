@@ -25,7 +25,7 @@ export class ServerModules {
     };
   }
 
-  public moduleCommands!: Record<string, ( ...args: unknown[] ) => void>;
+  public moduleCommands: Record<string, Function> = {};
 
   public get loadedModulesIterable(): Array<LoadedModule> {
     const loadedModules = [
@@ -101,6 +101,8 @@ export class ServerModules {
       } catch (error) {
         log("ERROR", `Module ${module.name} loading error!`);
         log("ERROR", error);
+
+        return;
       }
 
       log("SUCCESS", `Module ${module.name} loaded!`);

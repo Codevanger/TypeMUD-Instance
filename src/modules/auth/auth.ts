@@ -1,14 +1,14 @@
 import { CoreModule } from "../../utils/classes/module.ts";
 import { Client } from "../../utils/types/client.d.ts";
 import { Context } from "../../utils/types/context.d.ts";
-import { verify } from "https://deno.land/x/djwt/mod.ts"
-import { JWT_SECRET } from "../../utils/consts/secrets.ts";
+import { verify } from "https://deno.land/x/djwt@v2.2/mod.ts"
 import { log } from "../../utils/functions/log.ts";
+import { JWT_SECRET } from "../../utils/consts/secrets.ts";
 
 /**
  * Module for authentication
  */
-export class GameAuth extends CoreModule {
+export class AuthModule extends CoreModule {
   public priority = -1;
 
   public commandsToAdd = {
@@ -33,13 +33,19 @@ export class GameAuth extends CoreModule {
 
   public async auth(client: Client, token: string) {
     let auth = false;
-    console.log('here');
+    log("DEBUG", `Authenticating client ${client.id}...`);
+    log("DEBUG", `Token: ${token}`);
 
     try {
-      auth = await !!verify(token, null);
+      auth = !!await verify(token, JWT_SECRET, "HS256");
     } catch (e) {
       log("ERROR", `Failed to verify token!`);
       log("ERROR", e);
+    }
+
+    if (auth) {
+      client.websocket.send("AUTH OK");
+      client.auth = true;
     }
   }
 }
