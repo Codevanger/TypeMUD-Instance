@@ -95,7 +95,7 @@ export class ServerModules {
               throw new Error(`Command ${command} already exists!`);
             }
 
-            this.moduleCommands[command] = loadedModule.commandsToAdd[command];
+            this.moduleCommands[command] = loadedModule.commandsToAdd[command].bind(loadedModule);
           }
         }
       } catch (error) {
