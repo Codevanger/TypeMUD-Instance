@@ -3,6 +3,7 @@ import { Character } from "../classes/database-models.ts";
 
 export declare interface Client {
   id: number;
+  connectionId: number;
 	websocket: WebSocketClient;
   character: Character | null;
   auth: boolean;

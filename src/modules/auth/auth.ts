@@ -32,7 +32,13 @@ export class AuthModule extends CoreModule {
     return true;
   }
 
-  public async auth(client: Client, token: string) {
+  public async auth(client: Client, token: string): Promise<void> {
+    if (client.auth) {
+      client.websocket.send("AUTH: ALREADY_AUTHENTICATED");
+
+      return;
+    }
+
     let auth = false;
     log("DEBUG", `Authenticating client ${client.id}...`);
     log("DEBUG", `Token: ${token}`);
@@ -47,7 +53,11 @@ export class AuthModule extends CoreModule {
     if (auth) {
       const [, payload] = decode(token) as [unknown, ITokenPayload, unknown];
 
-      this.context.clients.find((x) => x.id === payload.id)?.websocket.close(1000, "ERROR: CONNECTION_INTERFARE");
+      const interfaringClient = this.context.clients.find((x) => x.id === payload.id);
+      if (interfaringClient) {
+        interfaringClient.websocket.send("AUTH: SOMEONE_ELSE_LOGGED_IN");
+        interfaringClient.websocket.close(1000, "AUTH: SOMEONE_ELSE_LOGGED_IN");
+      }
 
       client.auth = true;
       client.id = payload.id;

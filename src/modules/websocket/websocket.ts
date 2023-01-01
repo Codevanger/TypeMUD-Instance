@@ -37,11 +37,14 @@ export class WebSocketTransport extends TransportModule {
       throw new Error("Can't start WebSocket server!");
     }
 
+    let connectionId = 1;
+
     this.wsServer.on("connection", (socket) => {
       log("DEBUG", `Client ${this.context.clients.length + 1} connected!`);
 
       this.context.clients.push({
-        id: this.context.clients.length + 1,
+        id: 0,
+        connectionId: connectionId++,
         websocket: socket,
         auth: false,
         character: null
@@ -68,6 +71,8 @@ export class WebSocketTransport extends TransportModule {
 
       socket.on("close", () => {
         log("DEBUG", `Client ${client.id} disconnected!`);
+        this.context.clients = this.context.clients.filter((x) => x.connectionId !== client.connectionId);
+        console.log({ clients: this.context.clients, client });
       });
     });
 
