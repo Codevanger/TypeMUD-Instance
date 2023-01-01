@@ -25,7 +25,7 @@ export class User extends Model {
     },
     role: {
       type: DataTypes.INTEGER,
-    }
+    },
   };
 
   static characters() {
@@ -48,13 +48,12 @@ export class Instance extends Model {
       length: 255,
       unique: true,
     },
-    url: { 
+    url: {
       type: DataTypes.STRING,
       length: 255,
       unique: true,
     },
   };
-
 }
 
 export class Character extends Model {
@@ -69,8 +68,11 @@ export class Character extends Model {
     },
     name: {
       type: DataTypes.STRING,
-      length: 255,  
+      length: 255,
       unique: true,
+    },
+    location: {
+      type: DataTypes.INTEGER,
     },
   };
 
@@ -81,4 +83,4 @@ export class Character extends Model {
 
 Relationships.belongsTo(Character, User);
 
-export const DATABASE_MODELS: (typeof Model)[] = [User, Character, Instance];
+export const DATABASE_MODELS: typeof Model[] = [User, Character, Instance];

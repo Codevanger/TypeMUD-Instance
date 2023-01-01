@@ -40,14 +40,12 @@ export class AuthModule extends CoreModule {
     }
 
     let auth = false;
-    log("DEBUG", `Authenticating client ${client.id}...`);
-    log("DEBUG", `Token: ${token}`);
 
     try {
       auth = !!await verify(token, JWT_SECRET, "HS256");
     } catch (e) {
-      log("ERROR", `Failed to verify token!`);
-      log("ERROR", e);
+      log("DEBUG", `Failed to verify token!`);
+      log("DEBUG", e);
     }
 
     if (auth) {
@@ -55,8 +53,8 @@ export class AuthModule extends CoreModule {
 
       const interfaringClient = this.context.clients.find((x) => x.id === payload.id);
       if (interfaringClient) {
-        interfaringClient.websocket.send("AUTH: SOMEONE_ELSE_LOGGED_IN");
-        interfaringClient.websocket.close(1000, "AUTH: SOMEONE_ELSE_LOGGED_IN");
+        interfaringClient.websocket.send("AUTH: CONNECTION_INTERFERED");
+        interfaringClient.websocket.close(1000, "AUTH: CONNECTION_INTERFERED");
       }
 
       client.auth = true;
