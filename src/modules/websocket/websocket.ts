@@ -59,9 +59,12 @@ export class WebSocketTransport extends TransportModule {
 
           if (this.context.gameServer.modules.moduleCommands) {
             this.context.gameServer.modules.moduleCommands[command](client, ...args);
+          } else {
+            log("ERROR", `Command ${command} not found`);
+            client.websocket.send("COMMAND: NOT_FOUND");
           }
         }
-      })
+      });
 
       socket.on("close", () => {
         log("DEBUG", `Client ${client.id} disconnected!`);

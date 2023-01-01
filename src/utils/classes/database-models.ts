@@ -2,7 +2,7 @@ import {
   DataTypes,
   Model,
   Relationships,
-} from "https://deno.land/x/denodb/mod.ts";
+} from "https://deno.land/x/denodb@v1.1.0/mod.ts";
 
 export class User extends Model {
   static table = "users";
@@ -81,4 +81,4 @@ export class Character extends Model {
 
 Relationships.belongsTo(Character, User);
 
-export const DATABASE_MODELS = [User, Character, Instance];
+export const DATABASE_MODELS: (typeof Model)[] = [User, Character, Instance];

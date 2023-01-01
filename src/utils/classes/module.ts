@@ -9,7 +9,7 @@ import {
 } from "../types/modules.d.ts";
 
 export abstract class BaseModule implements IModule {
-  public abstract commandsToAdd?: {
+  public commandsToAdd?: {
     [key: string]: Function;
   };
   public abstract type: ModuleType;

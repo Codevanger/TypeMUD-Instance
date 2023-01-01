@@ -1,9 +1,10 @@
 import { CoreModule } from "../../utils/classes/module.ts";
 import { Client } from "../../utils/types/client.d.ts";
 import { Context } from "../../utils/types/context.d.ts";
-import { verify } from "https://deno.land/x/djwt@v2.2/mod.ts"
+import { decode, verify } from "https://deno.land/x/djwt@v2.2/mod.ts"
 import { log } from "../../utils/functions/log.ts";
 import { JWT_SECRET } from "../../utils/consts/secrets.ts";
+import { ITokenPayload } from "../../utils/types/token.d.ts";
 
 /**
  * Module for authentication
@@ -44,8 +45,12 @@ export class AuthModule extends CoreModule {
     }
 
     if (auth) {
-      client.websocket.send("AUTH OK");
+      const [, payload] = decode(token) as [unknown, ITokenPayload, unknown];
+
       client.auth = true;
+      client.id = payload.id;
+      client.websocket.send("AUTH: OK");
+      client.websocket.send(`CLIENT_ID: ${client.id}!`);
     }
   }
 }
