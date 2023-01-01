@@ -6,5 +6,4 @@ export declare interface Client {
 	websocket: WebSocketClient;
   character: Character | null;
   auth: boolean;
-  token: string;
 }

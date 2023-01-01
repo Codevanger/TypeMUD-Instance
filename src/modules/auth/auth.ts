@@ -11,9 +11,9 @@ import { log } from "../../utils/functions/log.ts";
 export class GameAuth extends CoreModule {
   public priority = -1;
 
-  public commandsToAdd = [
-
-  ];
+  public commandsToAdd = {
+    AUTH: this.auth,
+  };
 
   constructor(protected context: Context) {
     super(context);
@@ -31,29 +31,15 @@ export class GameAuth extends CoreModule {
     return true;
   }
 
-  public onClientMessage = (_: string, client: Client) => {
-    if (client.auth) {
-      return;
-    }
-
-    const token = _.split(" ")[1];
-
+  public async auth(client: Client, token: string) {
     let auth = false;
-
-    if (!token) {
-      return;
-    }
+    console.log('here');
 
     try {
-      auth = verify(token, JWT_SECRET, "HS512");
+      auth = await !!verify(token, null);
     } catch (e) {
-      log("ERROR", `User ${client.id} tried to connect with invalid token!`);
-      log("ERROR", e.message);
+      log("ERROR", `Failed to verify token!`);
+      log("ERROR", e);
     }
-
-    if (auth) {
-      client.token = token;
-      client.character = this.context.gameServer.modules.dataModule;
-    }
-  };
+  }
 }

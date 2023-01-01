@@ -25,13 +25,20 @@ export class ServerModules {
     };
   }
 
+  public moduleCommands!: Record<string, ( ...args: unknown[] ) => void>;
+
   public get loadedModulesIterable(): Array<LoadedModule> {
-    return [
+    const loadedModules = [
       ...Object.values(this.coreModules),
       ...Object.values(this.transportModules),
-      ...Object.values(this.gameModules),
-      this.dataModule,
+      ...Object.values(this.gameModules)
     ];
+
+    if (this.dataModule) {
+      loadedModules.push(this.dataModule);
+    }
+
+    return loadedModules;
   }
 
   public get loadedModulesNamesIterable(): Array<string> {
@@ -81,12 +88,23 @@ export class ServerModules {
           default:
             throw new Error("Unknown module type!");
         }
+
+        if (loadedModule.commandsToAdd) {
+          for (const command in loadedModule.commandsToAdd) {
+            if (this.moduleCommands[command]) {
+              throw new Error(`Command ${command} already exists!`);
+            }
+
+            this.moduleCommands[command] = loadedModule.commandsToAdd[command];
+          }
+        }
       } catch (error) {
         log("ERROR", `Module ${module.name} loading error!`);
         log("ERROR", error);
       }
 
       log("SUCCESS", `Module ${module.name} loaded!`);
+
       checkPerfomance({
         time: moduleStartTime,
         message: `Module ${module.name} loaded in [[time]]`,

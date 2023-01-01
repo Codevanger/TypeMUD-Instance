@@ -30,7 +30,11 @@ export class GameHttp extends CoreModule {
     if (!this.context.params?.port) return;
 
     try {
-      serve(this.handler.bind(this), { port: this.context.params.port + 1 });
+      serve(this.handler.bind(this), { 
+        port: this.context.params.port + 1, 
+        onListen: () => log("INFO", `HTTP server started on port ${this.context.params!.port + 1}!`) 
+      });
+
       log("DEBUG", `HTTP server started`);
     } catch (error) {
       log("ERROR", `Failed to start HTTP server!`);

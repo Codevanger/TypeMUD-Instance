@@ -30,7 +30,6 @@ export class GameServer {
 
       checkPerfomance({
         time: startTime,
-        message: "Server iteration done in [[time]]",
         overtimeMessage:
           "Server iteration overtime! Mind change your tickrate?",
         overtime: this.context.params!.refreshRate,
@@ -39,8 +38,8 @@ export class GameServer {
   }
 
   private syncDB(): void {
-    for (const module in this.modules.dataModules) {
-      const dataModule = this.modules.dataModules[module];
+    if (this.modules.dataModule) {
+      const dataModule = this.modules.dataModule;
 
       dataModule.sync();
     }
