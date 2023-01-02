@@ -133,6 +133,18 @@ export class GameMap extends CoreModule {
       client.websocket.send(TransportCode.LOCATION_NOT_FOUND.toString());
       return;
     }
+    
+    location.clientsInLocation.forEach((x) => {
+      if (x.character!.id === client.character!.id) return;
+
+      x.websocket.send(`${client.character!.name} пришел сюда`)
+    });
+
+    currentLocation.clientsInLocation.forEach((x) => {
+      if (x.character!.id === client.character!.id) return;
+
+      x.websocket.send(`${client.character!.name} ушел отсюда`)
+    });
 
     client.character.location = locationId;
     client.character.update();

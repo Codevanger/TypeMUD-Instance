@@ -5,6 +5,7 @@ import { GameHttp } from "../../modules/http/http.ts";
 import { AuthModule } from "../../modules/auth/auth.ts";
 import { CharacterModule } from "../../modules/character/character.ts";
 import { GameMap } from "../../modules/map/map.ts";
+import { GameChat } from "../../modules/chat/chat.ts";
 
 export const MODULES_TO_LOAD: Array<Module> = [
   GameHttp,
@@ -13,4 +14,5 @@ export const MODULES_TO_LOAD: Array<Module> = [
   AuthModule,
   CharacterModule,
   GameMap,
+  GameChat,
 ];

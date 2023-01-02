@@ -1,6 +1,6 @@
+import { Client } from "../types/client.d.ts";
 import { Context } from "../types/context.d.ts";
 import { ILocation, IMap } from "../types/map.d.ts";
-import { Character } from "./database-models.ts";
 
 export const VOID_LOCATION: ILocation = {
   id: -1,
@@ -11,13 +11,13 @@ export const VOID_LOCATION: ILocation = {
 export class Location {
   public readonly id: number;
   public readonly name: string;
-  public readonly description: string;
+  public readonly _description: string;
   private readonly _exits: Array<number>;
 
   constructor(location: ILocation, private map: Map, private context: Context) {
     this.id = location.id;
     this.name = location.name;
-    this.description = location.description;
+    this._description = location.description;
     this._exits = location.exits;
   }
 
@@ -25,18 +25,25 @@ export class Location {
     return this._exits.map((x) => this.map.getLocation(x));
   }
 
-  public get charactersInLocation(): Array<Character> {
-    return this.context.clients
-      .filter((client) => client.character?.location === this.id)
-      .map((client) => client.character!);
+  public get description(): string {
+    const clientsInLocation = this.clientsInLocation;
+
+    if (clientsInLocation.length === 0) {
+      return this._description;
+    }
+
+    const clientsNames = clientsInLocation.map((x) => x.character?.name);
+
+    return `${this._description}\nВ комнате: ${clientsNames.join(", ")}`;
+  }
+
+  public get clientsInLocation(): Array<Client> {
+    return this.context.clients.filter(
+      (client) => client.character?.location === this.id
+    );
   }
 
   public canMoveTo(locationId: number): boolean {
-    console.log({
-      exits: this._exits,
-      locationId,
-      includes: this._exits.includes(+locationId),
-    });
     return this._exits.includes(+locationId);
   }
 

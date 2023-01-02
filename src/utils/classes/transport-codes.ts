@@ -26,5 +26,10 @@ export enum TransportCode {
     "INVALID_ID" = 3003,
     "NOT_FOUND" = 3004,
     "INVALID_USER" = 3005,
-    "CHARACTER_OK" = 3006
+    "CHARACTER_OK" = 3006,
+    // CHAT
+    "EMPTY_MESSAGE" = 4001,
+    "MESSAGE_SENT" = 4002,
+    "MESSAGE_RECEIVED" = 4003,
+    "INCORRECT_MESSAGE" = 4004,
 }

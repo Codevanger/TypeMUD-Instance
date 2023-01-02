@@ -17,12 +17,16 @@ export abstract class BaseModule implements IModule {
 
   public priority = 0;
 
-  protected get loadedModules(): Array<LoadedModule> {
-    return this.context.gameServer.modules.loadedModulesIterable;
+  protected get loadedModules(): Record<string, LoadedModule> {
+    return this.context.gameServer.modules.loadedModules;
   }
 
   protected get loadedModulesNames(): Array<string> {
     return this.context.gameServer.modules.loadedModulesNamesIterable;
+  }
+
+  protected get loadedModulesIterable(): Array<LoadedModule> {
+    return this.context.gameServer.modules.loadedModulesIterable;
   }
 
   constructor(protected context: Context) {
@@ -33,7 +37,7 @@ export abstract class BaseModule implements IModule {
     if (dependencies && dependencies.length > 0) {
       const notLoadedDependencies = dependencies?.filter(
         (dependency) =>
-          !this.loadedModules.find(
+          !this.loadedModulesIterable.find(
             (module) => module.constructor.name == dependency.constructor.name
           )
       );
