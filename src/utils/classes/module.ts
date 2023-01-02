@@ -81,7 +81,5 @@ export abstract class GameModule extends BaseModule {
 
 export abstract class DataModule extends BaseModule {
   public type: ModuleType = "DATA";
-
-  public abstract save(): void;
   public abstract sync(): void;
 }

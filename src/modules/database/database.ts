@@ -35,12 +35,6 @@ export class GameDatabase extends DataModule {
     this.DB.link(DATABASE_MODELS);
   }
 
-  public save(): void {
-    log("DEBUG", "Saving database...");
-
-    this.DB.sync();
-  }
-
   private initDB(): void {
     try {
       const connector = new SQLite3Connector({

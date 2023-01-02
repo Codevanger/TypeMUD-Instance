@@ -53,6 +53,9 @@ export class Instance extends Model {
       length: 255,
       unique: true,
     },
+    port: {
+      type: DataTypes.INTEGER,
+    }
   };
 }
 
@@ -73,6 +76,7 @@ export class Character extends Model {
     },
     location: {
       type: DataTypes.INTEGER,
+      default: 0
     },
   };
 
