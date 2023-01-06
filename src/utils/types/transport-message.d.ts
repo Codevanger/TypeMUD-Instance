@@ -4,6 +4,7 @@ import { Client } from "./client.d.ts";
 export declare interface TransportMessage<T = null> {
   code: TransportCode;
   message: string;
-  initiator: Client;
+  initiator: Client | null;
+  initiatorType: "SERVER" | "CLIENT";
   data: T;
 }

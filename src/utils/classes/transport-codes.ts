@@ -2,6 +2,7 @@ export enum TransportCode {
   // General
   OK = 0,
   ERROR,
+  CONNECTED,
   DISCONNECTED,
   NOT_IMPLEMENTED,
   COMMAND_NOT_FOUND,
@@ -16,6 +17,7 @@ export enum TransportCode {
   // CHARACTER
   SELECTED_CHARACTER = 3000,
   CHARACTER_REQUIRED,
+  CHARACTER_INFO,
   // CHAT
   MESSAGE_SENT,
   MESSAGE_RECEIVED,

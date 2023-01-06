@@ -7,15 +7,23 @@ export function sendMessage<T = null>(
   client: Client,
   code: TransportCode,
   message?: string,
-  data?: T | null
+  data?: T | null,
+  initiatorType: "SERVER" | "CLIENT" = "SERVER",
+  initiator?: Client,
 ): void {
+  let generetatedInitiator = null;
+
+  if (initiatorType === "CLIENT") {
+    generetatedInitiator = initiator ? initiator : client;
+  }
+
   const messagge: TransportMessage<T | null> = {
     code: code,
-    initiator: client,
+    initiatorType,
+    initiator: generetatedInitiator,
     message: message ? message : "",
     data: data ? data : null,
   };
 
-  log("DEBUG", `Sending message to ${client.id}...`);
   client.websocket.send(JSON.stringify(messagge));
 }

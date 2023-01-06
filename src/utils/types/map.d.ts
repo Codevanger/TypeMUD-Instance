@@ -11,3 +11,7 @@ export declare interface ILocation {
   description: string;
   exits: Array<number>;
 }
+
+export declare interface ILocationWebsocketFriendly extends ILocation {
+  expandedExits: Array<ILocation>;
+}

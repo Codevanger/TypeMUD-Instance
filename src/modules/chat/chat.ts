@@ -65,16 +65,30 @@ export class GameChat extends GameModule {
     const locations = [...playerLocation.exits];
     locations.push(playerLocation);
     locations.forEach((location) => {
-      location.clientsInLocation.forEach((x) =>
-        sendMessage(x, TransportCode.MESSAGE_RECEIVED, readyMessage, {
-          message: readyMessage,
-        })
-      );
+      location.clientsInLocation.forEach((x) => {
+        if (x.id === client.id) return;
+
+        sendMessage(
+          x,
+          TransportCode.MESSAGE_RECEIVED,
+          readyMessage,
+          { message: readyMessage },
+          "CLIENT",
+          client
+        );
+      });
     });
 
-    sendMessage(client, TransportCode.MESSAGE_SENT, readyMessage, {
+    sendMessage(
+      client,
+      TransportCode.MESSAGE_SENT,
       readyMessage,
-    });
+      {
+        readyMessage,
+      },
+      "CLIENT",
+      client
+    );
   }
 
   public say(client: Client, ...messageChunks: string[]): void {
@@ -106,17 +120,32 @@ export class GameChat extends GameModule {
     const readyMessage = `${client.character.name} говорит: ${message}`;
 
     const mapModule = this.loadedModules["GameMap"] as GameMap;
+
     mapModule.MAP_OBJECT.getLocation(
       client.character!.location as number
-    ).clientsInLocation.forEach((x) =>
-      sendMessage(x, TransportCode.MESSAGE_RECEIVED, readyMessage, {
-        message: readyMessage,
-      })
-    );
+    ).clientsInLocation.forEach((x) => {
+      if (x.id === client.id) return;
 
-    sendMessage(client, TransportCode.MESSAGE_SENT, readyMessage, {
-      message: readyMessage,
+      sendMessage(
+        x,
+        TransportCode.MESSAGE_RECEIVED,
+        readyMessage,
+        { message: readyMessage },
+        "CLIENT",
+        client
+      );
     });
+
+    sendMessage(
+      client,
+      TransportCode.MESSAGE_SENT,
+      readyMessage,
+      {
+        message: readyMessage,
+      },
+      "CLIENT",
+      client
+    );
   }
 
   public whisper(

@@ -12,7 +12,8 @@ export class CharacterModule extends GameModule {
   public priority = 100;
 
   commandsToAdd = {
-    LOGIN: this.login,
+    SELECT: this.select,
+    ME: this.me,
   };
 
   constructor(protected context: Context) {
@@ -31,31 +32,41 @@ export class CharacterModule extends GameModule {
     return true;
   }
 
-  public async login(client: Client, characterId: number): Promise<void> {
+  public async select(client: Client, characterId: number): Promise<void> {
     if (client.character) {
-      sendMessage(client, TransportCode.ERROR, "You are already logged in!", null)
+      sendMessage(
+        client,
+        TransportCode.ERROR,
+        "You are already logged in!",
+        null
+      );
       return;
     }
 
     if (!client.auth) {
-      sendMessage(client, TransportCode.AUTH_REQUIRED, "You are not authenticated!", null)
+      sendMessage(
+        client,
+        TransportCode.AUTH_REQUIRED,
+        "You are not authenticated!",
+        null
+      );
       return;
     }
 
     if (characterId < 0) {
-      sendMessage(client, TransportCode.ERROR, "Invalid character ID!", null)
+      sendMessage(client, TransportCode.ERROR, "Invalid character ID!", null);
       return;
     }
 
     const character = await Character.where("id", characterId).first();
 
     if (!character) {
-      sendMessage(client, TransportCode.ERROR, "Character not found!", null)
+      sendMessage(client, TransportCode.ERROR, "Character not found!", null);
       return;
     }
 
     if (character.userId !== client.id) {
-      sendMessage(client, TransportCode.ERROR, "Invalid user!", null)
+      sendMessage(client, TransportCode.ERROR, "Invalid user!", null);
       return;
     }
 
@@ -66,6 +77,24 @@ export class CharacterModule extends GameModule {
       });
 
     client.character = character;
-    sendMessage(client, TransportCode.SELECTED_CHARACTER, "Characted selected!", null)
+    sendMessage(
+      client,
+      TransportCode.SELECTED_CHARACTER,
+      "Characted selected!",
+      character
+    );
+  }
+
+  public me(client: Client): void {
+    if (!client.character) {
+      sendMessage(client, TransportCode.ERROR, "You are not logged in!", null);
+      return;
+    }
+
+    sendMessage(client, TransportCode.CHARACTER_INFO, "Character info", {
+      character: client.character,
+      initiator: client,
+      initiatorType: "CLIENT",
+    });
   }
 }

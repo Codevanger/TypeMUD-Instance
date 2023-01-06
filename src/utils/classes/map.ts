@@ -1,6 +1,6 @@
 import { Client } from "../types/client.d.ts";
 import { Context } from "../types/context.d.ts";
-import { ILocation, IMap } from "../types/map.d.ts";
+import { ILocation, ILocationWebsocketFriendly, IMap } from "../types/map.d.ts";
 
 export const VOID_LOCATION: ILocation = {
   id: -1,
@@ -47,12 +47,13 @@ export class Location {
     return this._exits.includes(+locationId);
   }
 
-  public websocketFriendly(): ILocation {
+  public websocketFriendly(expandedExits = false): ILocationWebsocketFriendly {
     return {
       id: this.id,
       name: this.name,
       description: this.description,
       exits: this._exits,
+      expandedExits: expandedExits ? this.exits.map((x) => x.websocketFriendly()) : [],
     };
   }
 }

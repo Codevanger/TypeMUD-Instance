@@ -43,7 +43,7 @@ class TypeMUD {
     checkPerfomance({
       message: "Server inited in [[time]]",
       overtimeMessage: "Overtime when loading server!",
-      overtime: 100,
+      overtime: 1000,
     });
 
     log("EMPTY");

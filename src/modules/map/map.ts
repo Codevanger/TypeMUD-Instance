@@ -92,11 +92,14 @@ export class GameMap extends CoreModule {
       client.character!.location = this.MAP_OBJECT.bootstrap;
     }
 
-    sendMessage(client, TransportCode.MAP_INFO, "Map info", {
-      location: this.MAP_OBJECT.getLocation(
+    sendMessage(
+      client,
+      TransportCode.MAP_INFO,
+      "Map info",
+      this.MAP_OBJECT.getLocation(
         client.character!.location as number
-      ).websocketFriendly(),
-    });
+      ).websocketFriendly(true)
+    );
   }
 
   public moveCharacter(client: Client, locationId: number): void {
@@ -120,7 +123,7 @@ export class GameMap extends CoreModule {
     }
 
     if (!currentLocation.canMoveTo(locationId)) {
-      sendMessage(client, TransportCode.ERROR, "Can't move to this location")
+      sendMessage(client, TransportCode.ERROR, "Can't move to this location");
       return;
     }
 
@@ -134,18 +137,28 @@ export class GameMap extends CoreModule {
     location.clientsInLocation.forEach((x) => {
       if (x.character!.id === client.character!.id) return;
 
-      sendMessage(x, TransportCode.CHANGED, "Other character come here", { character: client.character });
+      sendMessage(x, TransportCode.CHANGED, "Other character come here", {
+        character: client.character,
+      });
     });
 
     currentLocation.clientsInLocation.forEach((x) => {
       if (x.character!.id === client.character!.id) return;
 
-      sendMessage(x, TransportCode.CHANGED, "Other character leave from here", { character: client.character })
+      sendMessage(x, TransportCode.CHANGED, "Other character leave from here", {
+        character: client.character,
+      });
     });
 
     client.character.location = locationId;
     client.character.update();
 
-    sendMessage(client, TransportCode.CHANGED, "You moved to the new location", { location });
+    const locationToSend = location.websocketFriendly(true);
+    sendMessage(
+      client,
+      TransportCode.CHANGED,
+      "You moved to the new location",
+      locationToSend
+    );
   }
 }

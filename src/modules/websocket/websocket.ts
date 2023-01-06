@@ -43,11 +43,14 @@ export class WebSocketTransport extends TransportModule {
     let connectionId = 1;
 
     this.wsServer.on("connection", (socket) => {
-      log("DEBUG", `Client ${this.context.clients.length + 1} connected!`);
+      connectionId++;
+
+      log("DEBUG", `Client ${connectionId} connected!`);
+      this.context.gameServer.modules.dataModule.sync();
 
       this.context.clients.push({
         id: 0,
-        connectionId: connectionId++,
+        connectionId: connectionId,
         websocket: socket,
         user: null,
         auth: false,
@@ -56,7 +59,24 @@ export class WebSocketTransport extends TransportModule {
 
       const client = this.context.clients[this.context.clients.length - 1];
 
+      sendMessage(client, TransportCode.CONNECTED);
+
       socket.on("message", (message) => {
+        log("DEBUG", `Message from client ${client.connectionId}: ${message}`);
+
+        if (message.startsWith('"') || message.startsWith("'")) {
+          try {
+            message = JSON.parse(message);
+          } catch (e) {
+            log("ERROR", "Can't parse message!");
+            log("ERROR", e.message);
+
+            sendMessage(client, TransportCode.ERROR, "Can't parse message!");
+
+            return;
+          }
+        }
+
         if (message.startsWith("/")) {
           const command = message.split(" ")[0].slice(1).toUpperCase();
           const args = message.split(" ").slice(1);
@@ -85,11 +105,14 @@ export class WebSocketTransport extends TransportModule {
       });
 
       socket.on("close", async () => {
-        log("DEBUG", `Client ${client.id} disconnected!`);
+        log(
+          "DEBUG",
+          `Client disconnected! ClientID: ${client.id}, ConnectionID: ${client.connectionId}`
+        );
         if (client.character) {
           try {
             await client.character.update();
-          } catch(e) {
+          } catch (e) {
             log("ERROR", e.message);
             log("ERROR", "Error while saving character data!");
           }
@@ -98,7 +121,7 @@ export class WebSocketTransport extends TransportModule {
         if (client.user) {
           try {
             await client.user.update();
-          } catch(e) {
+          } catch (e) {
             log("ERROR", e.message);
             log("ERROR", "Error while saving user data!");
           }
