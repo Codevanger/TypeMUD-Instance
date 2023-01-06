@@ -172,31 +172,43 @@ export class GameMap extends CoreModule {
       return;
     }
 
+    client.character.location = locationId;
+    client.character.update();
+
     location.clientsInLocation.forEach((x) => {
       if (x.character!.id === client.character!.id) return;
 
-      sendMessage(x, TransportCode.CHANGED, "Other character come here", {
-        character: client.character,
-      });
+      sendMessage(
+        x,
+        TransportCode.CHANGED,
+        "Other character come here",
+        client.character,
+        "CLIENT",
+        client
+      );
     });
 
     currentLocation.clientsInLocation.forEach((x) => {
       if (x.character!.id === client.character!.id) return;
 
-      sendMessage(x, TransportCode.CHANGED, "Other character leave from here", {
-        character: client.character,
-      });
+      sendMessage(
+        x,
+        TransportCode.CHANGED,
+        "Other character leave from here",
+        client.character,
+        "CLIENT",
+        client
+      );
     });
-
-    client.character.location = locationId;
-    client.character.update();
 
     const locationToSend = location.websocketFriendly(true);
     sendMessage(
       client,
       TransportCode.CHANGED,
       "You moved to the new location",
-      locationToSend
+      locationToSend,
+      "CLIENT",
+      client
     );
   }
 }
