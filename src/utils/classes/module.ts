@@ -68,6 +68,7 @@ export abstract class BaseModule implements IModule {
    * Character events
    */
   public onCharacterLogin?: (client: Client, character: Character) => void;
+  public onCharacterLogout?: (client: Client, character: Character) => void;
 }
 export abstract class CoreModule extends BaseModule {
   public type: ModuleType = "CORE";

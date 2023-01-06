@@ -116,6 +116,12 @@ export class WebSocketTransport extends TransportModule {
             log("ERROR", e.message);
             log("ERROR", "Error while saving character data!");
           }
+
+          this.context.gameServer.modules.loadedModulesIterable
+            .filter((module) => module.onCharacterLogout)
+            .forEach((module) => {
+              module.onCharacterLogout!(client, client.character!);
+            });
         }
 
         if (client.user) {

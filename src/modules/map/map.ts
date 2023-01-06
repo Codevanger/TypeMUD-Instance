@@ -73,10 +73,48 @@ export class GameMap extends CoreModule {
     return map;
   }
 
-  public onCharacterLogin = (_: Client, character: Character): void => {
+  public onCharacterLogin = (client: Client, character: Character): void => {
     if (!character.location || character.location === 0) {
       character.location = this.MAP_OBJECT.bootstrap;
     }
+
+    const location = this.MAP_OBJECT.getLocation(character.location as number);
+
+    if (!location) {
+      return;
+    }
+
+    location.clientsInLocation.forEach((x) => {
+      if (client.id === x.id) return;
+
+      sendMessage(
+        x,
+        TransportCode.CHANGED,
+        "Other character come here",
+        client,
+        "CLIENT"
+      );
+    });
+  };
+
+  public onCharacterLogout = (client: Client, character: Character): void => {
+    const location = this.MAP_OBJECT.getLocation(character.location as number);
+
+    if (!location) {
+      return;
+    }
+
+    location.clientsInLocation.forEach((x) => {
+      if (client.id === x.id) return;
+
+      sendMessage(
+        client,
+        TransportCode.CHANGED,
+        "Other character left from here",
+        client,
+        "CLIENT"
+      );
+    });
   };
 
   public getCurrentLocation(client: Client): void {
