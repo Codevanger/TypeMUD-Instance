@@ -1,12 +1,13 @@
 import { CoreModule } from "../../utils/classes/module.ts";
 import { Client } from "../../utils/types/client.d.ts";
 import { Context } from "../../utils/types/context.d.ts";
-import { decode, verify } from "https://deno.land/x/djwt@v2.2/mod.ts"
+import { decode, verify } from "https://deno.land/x/djwt@v2.2/mod.ts";
 import { log } from "../../utils/functions/log.ts";
 import { JWT_SECRET } from "../../utils/consts/secrets.ts";
 import { ITokenPayload } from "../../utils/types/token.d.ts";
 import { TransportCode } from "../../utils/classes/transport-codes.ts";
 import { User } from "../../utils/classes/database-models.ts";
+import { sendMessage } from "../../utils/functions/send-message.ts";
 
 /**
  * Module for authentication
@@ -36,7 +37,12 @@ export class AuthModule extends CoreModule {
 
   public async auth(client: Client, token: string): Promise<void> {
     if (client.auth) {
-      client.websocket.send(TransportCode.ALREADY_AUTHENTICATED.toString());
+      sendMessage(
+        client,
+        TransportCode.ERROR,
+        "You are already authenticated!",
+        null
+      );
 
       return;
     }
@@ -44,7 +50,7 @@ export class AuthModule extends CoreModule {
     let auth = false;
 
     try {
-      auth = !!await verify(token, JWT_SECRET, "HS256");
+      auth = !!(await verify(token, JWT_SECRET, "HS256"));
     } catch (e) {
       log("DEBUG", `Failed to verify token!`);
       log("DEBUG", e);
@@ -56,23 +62,33 @@ export class AuthModule extends CoreModule {
       const user = await User.where("id", payload.id).first();
 
       if (!user || user.username !== payload.username) {
-        client.websocket.send(TransportCode.AUTH_FAILED.toString());
-        client.websocket.close(1000, "AUTH FAILED");
+        sendMessage(client, TransportCode.ERROR, "Invalid token");
+        client.websocket.close(1000, "Auth failed");
 
         return;
       }
 
-      const interfaringClient = this.context.clients.find((x) => x.id === payload.id);
+      const interfaringClient = this.context.clients.find(
+        (x) => x.id === payload.id
+      );
       if (interfaringClient) {
-        interfaringClient.websocket.send(TransportCode.CONNECTION_INTERFERED.toString());
-        interfaringClient.websocket.close(1000, "CONNECTION INTERFERED");
+        sendMessage(
+          interfaringClient,
+          TransportCode.DISCONNECTED,
+          "Connection interfered",
+          null
+        );
+        interfaringClient.websocket.close(1000, "Connection interfered");
       }
 
       client.auth = true;
       client.id = payload.id;
       client.user = user;
-      client.websocket.send(TransportCode.AUTH_SUCCESS.toString());
-      client.websocket.send(`CLIENT_ID: ${client.id}!`);
+
+      sendMessage(client, TransportCode.AUTHENTICATED, "Authenticated", {
+        id: client.id,
+        user: client.user,
+      });
     }
   }
 }

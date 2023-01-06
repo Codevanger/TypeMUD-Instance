@@ -1,5 +1,6 @@
 import { GameModule } from "../../utils/classes/module.ts";
 import { TransportCode } from "../../utils/classes/transport-codes.ts";
+import { sendMessage } from "../../utils/functions/send-message.ts";
 import { Client } from "../../utils/types/client.d.ts";
 import { Context } from "../../utils/types/context.d.ts";
 import { GameMap } from "../map/map.ts";
@@ -32,17 +33,25 @@ export class GameChat extends GameModule {
     const message = messageChunks.join(" ");
 
     if (!client.auth) {
-      client.websocket.send(TransportCode.NOT_AUTHENTICATED.toString());
+      sendMessage(
+        client,
+        TransportCode.AUTH_REQUIRED,
+        "You are not authenticated!"
+      );
       return;
     }
 
     if (message.length <= 0) {
-      client.websocket.send(TransportCode.EMPTY_MESSAGE.toString());
+      sendMessage(client, TransportCode.ERROR, "Empty message!");
       return;
     }
 
     if (!client.character) {
-      client.websocket.send(TransportCode.NO_CHARACTER.toString());
+      sendMessage(
+        client,
+        TransportCode.CHARACTER_REQUIRED,
+        "You need to select character!"
+      );
       return;
     }
 
@@ -56,30 +65,41 @@ export class GameChat extends GameModule {
     const locations = [...playerLocation.exits];
     locations.push(playerLocation);
     locations.forEach((location) => {
-      location.clientsInLocation.forEach((x) => {
-        x.websocket.send(TransportCode.MESSAGE_RECEIVED.toString());
-        x.websocket.send(readyMessage);
-      });
+      location.clientsInLocation.forEach((x) =>
+        sendMessage(x, TransportCode.MESSAGE_RECEIVED, readyMessage, {
+          message: readyMessage,
+        })
+      );
     });
 
-    client.websocket.send(TransportCode.MESSAGE_SENT.toString());
+    sendMessage(client, TransportCode.MESSAGE_SENT, readyMessage, {
+      readyMessage,
+    });
   }
 
   public say(client: Client, ...messageChunks: string[]): void {
     const message = messageChunks.join(" ");
 
     if (!client.auth) {
-      client.websocket.send(TransportCode.NOT_AUTHENTICATED.toString());
+      sendMessage(
+        client,
+        TransportCode.AUTH_REQUIRED,
+        "You are not authenticated!"
+      );
       return;
     }
 
     if (message.length <= 0) {
-      client.websocket.send(TransportCode.EMPTY_MESSAGE.toString());
+      sendMessage(client, TransportCode.ERROR, "Empty message!");
       return;
     }
 
     if (!client.character) {
-      client.websocket.send(TransportCode.NO_CHARACTER.toString());
+      sendMessage(
+        client,
+        TransportCode.CHARACTER_REQUIRED,
+        "You need to select character!"
+      );
       return;
     }
 
@@ -88,51 +108,70 @@ export class GameChat extends GameModule {
     const mapModule = this.loadedModules["GameMap"] as GameMap;
     mapModule.MAP_OBJECT.getLocation(
       client.character!.location as number
-    ).clientsInLocation.forEach((x) => {
-      x.websocket.send(TransportCode.MESSAGE_RECEIVED.toString());
-      x.websocket.send(readyMessage);
-    });
+    ).clientsInLocation.forEach((x) =>
+      sendMessage(x, TransportCode.MESSAGE_RECEIVED, readyMessage, {
+        message: readyMessage,
+      })
+    );
 
-    client.websocket.send(TransportCode.MESSAGE_SENT.toString());
+    sendMessage(client, TransportCode.MESSAGE_SENT, readyMessage, {
+      message: readyMessage,
+    });
   }
 
-  public whisper(client: Client, characterName: string, ...messageChunks: string[]): void {
+  public whisper(
+    client: Client,
+    characterName: string,
+    ...messageChunks: string[]
+  ): void {
     const message = messageChunks.join(" ");
 
     if (!client.auth) {
-      client.websocket.send(TransportCode.NOT_AUTHENTICATED.toString());
+      sendMessage(
+        client,
+        TransportCode.AUTH_REQUIRED,
+        "You are not authenticated!"
+      );
       return;
     }
 
     if (message.length <= 0) {
-      client.websocket.send(TransportCode.EMPTY_MESSAGE.toString());
+      sendMessage(client, TransportCode.ERROR, "Empty message!");
       return;
     }
 
     if (!client.character) {
-      client.websocket.send(TransportCode.NO_CHARACTER.toString());
+      sendMessage(
+        client,
+        TransportCode.CHARACTER_REQUIRED,
+        "You need to select character!"
+      );
       return;
     }
 
     if (characterName === client.character.name || characterName.length <= 1) {
-      client.websocket.send(TransportCode.INCORRECT_MESSAGE.toString());
+      sendMessage(client, TransportCode.NOT_FOUND, "No such character!");
       return;
     }
 
     const readyMessage = `${client.character.name} шепчет вам: ${message}`;
     const readyMessageForSender = `Вы шепчете ${characterName}: ${message}`;
 
-    const character = this.context.clients.find((x) => x.character?.name === characterName);
+    const character = this.context.clients.find(
+      (x) => x.character?.name === characterName
+    );
 
     if (!character) {
-        client.websocket.send(TransportCode.INCORRECT_MESSAGE.toString());
-        return;
+      sendMessage(client, TransportCode.NOT_FOUND, "No such character!");
+      return;
     }
 
-    character.websocket.send(TransportCode.MESSAGE_RECEIVED.toString());
-    character.websocket.send(readyMessage);
+    sendMessage(character, TransportCode.MESSAGE_RECEIVED, readyMessage, {
+      message: readyMessage,
+    });
 
-    client.websocket.send(TransportCode.MESSAGE_SENT.toString());
-    client.websocket.send(readyMessageForSender);
+    sendMessage(client, TransportCode.MESSAGE_SENT, readyMessageForSender, {
+      message: readyMessageForSender,
+    });
   }
 }

@@ -4,6 +4,7 @@ import { Character } from "../../utils/classes/database-models.ts";
 import { TransportModule } from "../../utils/classes/module.ts";
 import { TransportCode } from "../../utils/classes/transport-codes.ts";
 import { log } from "../../utils/functions/log.ts";
+import { sendMessage } from "../../utils/functions/send-message.ts";
 import { Context } from "../../utils/types/context.d.ts";
 import { Priority } from "../../utils/types/priority.d.ts";
 
@@ -76,7 +77,9 @@ export class WebSocketTransport extends TransportModule {
             );
           } else {
             log("ERROR", `Command ${command} not found`);
-            client.websocket.send(TransportCode.COMMAND_NOT_FOUND.toString());
+            sendMessage(client, TransportCode.COMMAND_NOT_FOUND);
+
+            return;
           }
         }
       });

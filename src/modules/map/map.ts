@@ -6,6 +6,7 @@ import { IMap, ILocation } from "../../utils/types/map.d.ts";
 import { Client } from "../../utils/types/client.d.ts";
 import { TransportCode } from "../../utils/classes/transport-codes.ts";
 import { Character } from "../../utils/classes/database-models.ts";
+import { sendMessage } from "../../utils/functions/send-message.ts";
 
 /**
  * Map module
@@ -80,36 +81,32 @@ export class GameMap extends CoreModule {
 
   public getCurrentLocation(client: Client): void {
     if (!client.auth) {
-      client.websocket.send(TransportCode.NOT_AUTHENTICATED.toString());
-      client.websocket.send(JSON.stringify(this.MAP_OBJECT.getLocation(-1)));
+      sendMessage(client, TransportCode.AUTH_REQUIRED, "Not authenticated");
     }
 
     if (!client.character) {
-      client.websocket.send(TransportCode.NO_CHARACTER.toString());
-      client.websocket.send(JSON.stringify(this.MAP_OBJECT.getLocation(-1)));
+      sendMessage(client, TransportCode.CHARACTER_REQUIRED, "No character");
     }
 
     if (!client.character!.location) {
       client.character!.location = this.MAP_OBJECT.bootstrap;
     }
 
-    client.websocket.send(
-      JSON.stringify(
-        this.MAP_OBJECT.getLocation(
-          client.character!.location as number
-        ).websocketFriendly()
-      )
-    );
+    sendMessage(client, TransportCode.MAP_INFO, "Map info", {
+      location: this.MAP_OBJECT.getLocation(
+        client.character!.location as number
+      ).websocketFriendly(),
+    });
   }
 
   public moveCharacter(client: Client, locationId: number): void {
     if (!client.auth) {
-      client.websocket.send(TransportCode.NOT_AUTHENTICATED.toString());
+      sendMessage(client, TransportCode.AUTH_REQUIRED, "Not authenticated");
       return;
     }
 
     if (!client.character) {
-      client.websocket.send(TransportCode.NO_CHARACTER.toString());
+      sendMessage(client, TransportCode.CHARACTER_REQUIRED, "No character");
       return;
     }
 
@@ -118,37 +115,37 @@ export class GameMap extends CoreModule {
     );
 
     if (locationId === currentLocation.id) {
-      client.websocket.send(TransportCode.ALREADY_HERE.toString());
+      sendMessage(client, TransportCode.ERROR, "You are already here");
       return;
     }
 
     if (!currentLocation.canMoveTo(locationId)) {
-      client.websocket.send(TransportCode.CANT_MOVE_TO.toString());
+      sendMessage(client, TransportCode.ERROR, "Can't move to this location")
       return;
     }
 
     const location = this.MAP_OBJECT.getLocation(locationId);
 
     if (!location) {
-      client.websocket.send(TransportCode.LOCATION_NOT_FOUND.toString());
+      sendMessage(client, TransportCode.ERROR, "Location not found");
       return;
     }
-    
+
     location.clientsInLocation.forEach((x) => {
       if (x.character!.id === client.character!.id) return;
 
-      x.websocket.send(`${client.character!.name} пришел сюда`)
+      sendMessage(x, TransportCode.CHANGED, "Other character come here", { character: client.character });
     });
 
     currentLocation.clientsInLocation.forEach((x) => {
       if (x.character!.id === client.character!.id) return;
 
-      x.websocket.send(`${client.character!.name} ушел отсюда`)
+      sendMessage(x, TransportCode.CHANGED, "Other character leave from here", { character: client.character })
     });
 
     client.character.location = locationId;
     client.character.update();
 
-    client.websocket.send(TransportCode.MOVED.toString());
+    sendMessage(client, TransportCode.CHANGED, "You moved to the new location", { location });
   }
 }
