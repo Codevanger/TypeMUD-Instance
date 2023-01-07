@@ -5,10 +5,12 @@ import { log } from "../../utils/functions/log.ts";
 import { sendMessage } from "../../utils/functions/send-message.ts";
 import { Context } from "../../utils/types/context.d.ts";
 import { Priority } from "../../utils/types/priority.d.ts";
+import { GameDatabase } from "../database/database.ts";
 
 export class WebSocketTransport extends TransportModule {
   private wsServer!: WebSocketServer;
   public priority: Priority = 0;
+  public dependencies = [GameDatabase];
 
   constructor(protected context: Context) {
     super(context);
@@ -57,7 +59,10 @@ export class WebSocketTransport extends TransportModule {
 
       const client = this.context.clients[this.context.clients.length - 1];
 
-      sendMessage(client, TransportCode.CONNECTED);
+      sendMessage({
+        client: client,
+        code: TransportCode.CONNECTED,
+      });
 
       socket.on("message", (message) => {
         log("DEBUG", `Message from client ${client.connectionId}: ${message}`);
@@ -69,7 +74,10 @@ export class WebSocketTransport extends TransportModule {
             log("ERROR", "Can't parse message!");
             log("ERROR", e.message);
 
-            sendMessage(client, TransportCode.ERROR, "Can't parse message!");
+            sendMessage({
+              client: client,
+              code: TransportCode.CANT_PARSE,
+            });
 
             return;
           }
@@ -95,7 +103,10 @@ export class WebSocketTransport extends TransportModule {
             );
           } else {
             log("ERROR", `Command ${command} not found`);
-            sendMessage(client, TransportCode.COMMAND_NOT_FOUND);
+            sendMessage({
+              client: client,
+              code: TransportCode.COMMAND_NOT_FOUND,
+            });
 
             return;
           }
@@ -107,6 +118,9 @@ export class WebSocketTransport extends TransportModule {
           "DEBUG",
           `Client disconnected! ClientID: ${client.id}, ConnectionID: ${client.connectionId}`
         );
+
+        await client.websocket.close(0, "");
+
         if (client.character) {
           try {
             await client.character.update();

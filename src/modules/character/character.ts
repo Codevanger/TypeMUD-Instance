@@ -34,39 +34,49 @@ export class CharacterModule extends GameModule {
 
   public async select(client: Client, characterId: number): Promise<void> {
     if (client.character) {
-      sendMessage(
+      sendMessage({
         client,
-        TransportCode.ERROR,
-        "You are already logged in!",
-        null
-      );
+        code: TransportCode.ALREADY_LOGGED_IN,
+      });
+
       return;
     }
 
     if (!client.auth) {
-      sendMessage(
+      sendMessage({
         client,
-        TransportCode.AUTH_REQUIRED,
-        "You are not authenticated!",
-        null
-      );
+        code: TransportCode.AUTH_REQUIRED,
+      })
+
       return;
     }
 
     if (characterId < 0) {
-      sendMessage(client, TransportCode.ERROR, "Invalid character ID!", null);
+      sendMessage({
+        client,
+        code: TransportCode.CHARACTER_NOT_FOUND,
+      })
+
       return;
     }
 
     const character = await Character.where("id", characterId).first();
 
     if (!character) {
-      sendMessage(client, TransportCode.ERROR, "Character not found!", null);
+      sendMessage({
+        client,
+        code: TransportCode.CHARACTER_NOT_FOUND,
+      });
+
       return;
     }
 
     if (character.userId !== client.id) {
-      sendMessage(client, TransportCode.ERROR, "Invalid user!", null);
+      sendMessage({
+        client,
+        code: TransportCode.INVALID_USER,
+      });
+
       return;
     }
 
@@ -77,22 +87,32 @@ export class CharacterModule extends GameModule {
       });
 
     client.character = character;
-    sendMessage(
+
+    sendMessage({
       client,
-      TransportCode.SELECTED_CHARACTER,
-      "Characted selected!",
-      character
-    );
+      code: TransportCode.SELECTED_CHARACTER,
+      data: {
+        character,
+      },
+    });
   }
 
   public me(client: Client): void {
     if (!client.character) {
-      sendMessage(client, TransportCode.ERROR, "You are not logged in!", null);
+      sendMessage({
+        client,
+        code: TransportCode.CHARACTER_REQUIRED,
+      });
+
       return;
     }
 
-    sendMessage(client, TransportCode.CHARACTER_INFO, "Character info", {
-      character: client.character,
+    sendMessage({
+      client,
+      code: TransportCode.CHARACTER_INFO,
+      data: {
+        character: client.character,
+      },
       initiator: client,
       initiatorType: "CLIENT",
     });

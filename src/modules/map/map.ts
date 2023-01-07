@@ -87,13 +87,16 @@ export class GameMap extends CoreModule {
     location.clientsInLocation.forEach((x) => {
       if (client.id === x.id) return;
 
-      sendMessage(
-        x,
-        TransportCode.CHANGED,
-        "Other character come here",
-        client,
-        "CLIENT"
-      );
+      sendMessage({
+        client: x,
+        code: TransportCode.CHARACTER_ENTERED,
+        data: {
+          character: client.character,
+          location: this.MAP_OBJECT.getLocation(-1),
+        },
+        initiatorType: "CLIENT",
+        initiator: client,
+      });
     });
   };
 
@@ -107,47 +110,64 @@ export class GameMap extends CoreModule {
     location.clientsInLocation.forEach((x) => {
       if (client.id === x.id) return;
 
-      sendMessage(
-        client,
-        TransportCode.CHANGED,
-        "Other character left from here",
-        client,
-        "CLIENT"
-      );
+      sendMessage({
+        client: x,
+        code: TransportCode.CHARACTER_LEAVED,
+        data: {
+          character: client.character,
+          location: this.MAP_OBJECT.getLocation(-1)
+        },
+        initiatorType: "CLIENT",
+        initiator: client,
+      });
     });
   };
 
   public getCurrentLocation(client: Client): void {
     if (!client.auth) {
-      sendMessage(client, TransportCode.AUTH_REQUIRED, "Not authenticated");
+      sendMessage({
+        client: client,
+        code: TransportCode.AUTH_REQUIRED,
+      });
     }
 
     if (!client.character) {
-      sendMessage(client, TransportCode.CHARACTER_REQUIRED, "No character");
+      sendMessage({
+        client: client,
+        code: TransportCode.CHARACTER_REQUIRED,
+      });
     }
 
     if (!client.character!.location) {
       client.character!.location = this.MAP_OBJECT.bootstrap;
     }
 
-    sendMessage(
-      client,
-      TransportCode.MAP_INFO,
-      "Map info",
-      this.MAP_OBJECT.getLocation(
-        client.character!.location as number
-      ).websocketFriendly(true)
-    );
+    sendMessage({
+      client: client,
+      code: TransportCode.MAP_INFO,
+      data: {
+        location: this.MAP_OBJECT.getLocation(
+          client.character!.location as number
+        ).websocketFriendly(true),
+      },
+    });
   }
 
   public moveCharacter(client: Client, locationId: number): void {
     if (!client.auth) {
-      sendMessage(client, TransportCode.AUTH_REQUIRED, "Not authenticated");
+      sendMessage({
+        client: client,
+        code: TransportCode.AUTH_REQUIRED,
+      });
+
       return;
     }
 
     if (!client.character) {
-      sendMessage(client, TransportCode.CHARACTER_REQUIRED, "No character");
+      sendMessage({
+        client: client,
+        code: TransportCode.CHARACTER_REQUIRED,
+      });
       return;
     }
 
@@ -156,19 +176,31 @@ export class GameMap extends CoreModule {
     );
 
     if (locationId === currentLocation.id) {
-      sendMessage(client, TransportCode.ERROR, "You are already here");
+      sendMessage({
+        client: client,
+        code: TransportCode.ALREADY_HERE,
+      });
+
       return;
     }
 
     if (!currentLocation.canMoveTo(locationId)) {
-      sendMessage(client, TransportCode.ERROR, "Can't move to this location");
+      sendMessage({
+        client: client,
+        code: TransportCode.CANT_MOVE_TO_DESTINATION,
+      });
+
       return;
     }
 
     const location = this.MAP_OBJECT.getLocation(locationId);
 
     if (!location) {
-      sendMessage(client, TransportCode.ERROR, "Location not found");
+      sendMessage({
+        client: client,
+        code: TransportCode.CANT_FIND_LOCATION,
+      });
+
       return;
     }
 
@@ -178,37 +210,42 @@ export class GameMap extends CoreModule {
     location.clientsInLocation.forEach((x) => {
       if (x.character!.id === client.character!.id) return;
 
-      sendMessage(
-        x,
-        TransportCode.CHANGED,
-        "Other character come here",
-        client.character,
-        "CLIENT",
-        client
-      );
+      sendMessage({
+        client: x,
+        code: TransportCode.CHARACTER_ENTERED,
+        data: {
+          character: client.character,
+          location: currentLocation,
+        },
+        initiatorType: "CLIENT",
+        initiator: client,
+      });
     });
 
     currentLocation.clientsInLocation.forEach((x) => {
       if (x.character!.id === client.character!.id) return;
 
-      sendMessage(
-        x,
-        TransportCode.CHANGED,
-        "Other character leave from here",
-        client.character,
-        "CLIENT",
-        client
-      );
+      sendMessage({
+        client: x,
+        code: TransportCode.CHARACTER_LEAVED,
+        data: {
+          character: client.character,
+          newLocation: location,
+        },
+        initiatorType: "CLIENT",
+        initiator: client,
+      });
     });
 
     const locationToSend = location.websocketFriendly(true);
-    sendMessage(
-      client,
-      TransportCode.CHANGED,
-      "You moved to the new location",
-      locationToSend,
-      "CLIENT",
-      client
-    );
+    sendMessage({
+      client: client,
+      code: TransportCode.MOVED,
+      data: {
+        location: locationToSend,
+      },
+      initiatorType: "CLIENT",
+      initiator: client,
+    });
   }
 }

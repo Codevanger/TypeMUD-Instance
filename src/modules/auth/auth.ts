@@ -37,12 +37,10 @@ export class AuthModule extends CoreModule {
 
   public async auth(client: Client, token: string): Promise<void> {
     if (client.auth) {
-      sendMessage(
-        client,
-        TransportCode.ERROR,
-        "You are already authenticated!",
-        null
-      );
+      sendMessage({
+        client: client,
+        code: TransportCode.ALREADY_AUTHENTICATED,
+      });
 
       return;
     }
@@ -62,7 +60,11 @@ export class AuthModule extends CoreModule {
       const user = await User.where("id", payload.id).first();
 
       if (!user || user.username !== payload.username) {
-        sendMessage(client, TransportCode.ERROR, "Invalid token");
+        sendMessage({
+          client: client,
+          code: TransportCode.INVALID_TOKEN,
+        });
+
         client.websocket.close(1000, "Auth failed");
 
         return;
@@ -72,12 +74,13 @@ export class AuthModule extends CoreModule {
         (x) => x.id === payload.id
       );
       if (interfaringClient) {
-        sendMessage(
-          interfaringClient,
-          TransportCode.DISCONNECTED,
-          "Connection interfered",
-          null
-        );
+        sendMessage({
+          client: interfaringClient,
+          code: TransportCode.INTERFERED,
+          initiator: client,
+          initiatorType: "CLIENT",
+        });
+
         interfaringClient.websocket.close(1000, "Connection interfered");
       }
 
@@ -85,9 +88,13 @@ export class AuthModule extends CoreModule {
       client.id = payload.id;
       client.user = user;
 
-      sendMessage(client, TransportCode.AUTHENTICATED, "Authenticated", {
-        id: client.id,
-        user: client.user,
+      sendMessage({
+        client: client,
+        code: TransportCode.AUTHENTICATED,
+        data: {
+          id: client.id,
+          user: client.user,
+        },
       });
     }
   }

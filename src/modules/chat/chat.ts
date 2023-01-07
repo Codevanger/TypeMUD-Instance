@@ -11,7 +11,10 @@ export class GameChat extends GameModule {
     SAY: this.say,
     SHOUT: this.shout,
     WHISPER: this.whisper,
+    ME: this.me
   };
+
+  public dependencies = [GameMap];
 
   constructor(protected context: Context) {
     super(context);
@@ -33,29 +36,33 @@ export class GameChat extends GameModule {
     const message = messageChunks.join(" ");
 
     if (!client.auth) {
-      sendMessage(
+      sendMessage({
         client,
-        TransportCode.AUTH_REQUIRED,
-        "You are not authenticated!"
-      );
+        code: TransportCode.AUTH_REQUIRED,
+      });
+
       return;
     }
 
     if (message.length <= 0) {
-      sendMessage(client, TransportCode.ERROR, "Empty message!");
+      sendMessage({
+        client,
+        code: TransportCode.INCORRECT_MESSAGE,
+      });
+
       return;
     }
 
     if (!client.character) {
-      sendMessage(
+      sendMessage({
         client,
-        TransportCode.CHARACTER_REQUIRED,
-        "You need to select character!"
-      );
+        code: TransportCode.CHARACTER_REQUIRED,
+      });
+
       return;
     }
 
-    const readyMessage = `${client.character.name} кричит: ${message}`;
+    const readyMessage = `[${client.character.name}] кричит: ${message}`;
 
     const mapModule = this.loadedModules["GameMap"] as GameMap;
 
@@ -68,52 +75,56 @@ export class GameChat extends GameModule {
       location.clientsInLocation.forEach((x) => {
         if (x.id === client.id) return;
 
-        sendMessage(
-          x,
-          TransportCode.MESSAGE_RECEIVED,
-          readyMessage,
-          { message: readyMessage },
-          "CLIENT",
-          client
-        );
+        sendMessage({
+          client: x,
+          code: TransportCode.MESSAGE_RECEIVED,
+          data: {
+            message: readyMessage,
+            character: client.character,
+            type: "shout",
+          },
+          initiator: client,
+          initiatorType: "CLIENT",
+        });
       });
     });
 
-    sendMessage(
+    sendMessage({
       client,
-      TransportCode.MESSAGE_SENT,
-      readyMessage,
-      {
-        readyMessage,
+      code: TransportCode.MESSAGE_SENT,
+      data: {
+        message: readyMessage,
+        character: client.character,
+        type: "shout",
       },
-      "CLIENT",
-      client
-    );
+      initiator: client,
+      initiatorType: "CLIENT",
+    });
   }
 
   public say(client: Client, ...messageChunks: string[]): void {
     const message = messageChunks.join(" ");
 
     if (!client.auth) {
-      sendMessage(
+      sendMessage({
         client,
-        TransportCode.AUTH_REQUIRED,
-        "You are not authenticated!"
-      );
+        code: TransportCode.AUTH_REQUIRED,
+      });
+
       return;
     }
 
     if (message.length <= 0) {
-      sendMessage(client, TransportCode.ERROR, "Empty message!");
+      sendMessage({ client, code: TransportCode.INCORRECT_MESSAGE });
       return;
     }
 
     if (!client.character) {
-      sendMessage(
+      sendMessage({
         client,
-        TransportCode.CHARACTER_REQUIRED,
-        "You need to select character!"
-      );
+        code: TransportCode.CHARACTER_REQUIRED,
+      });
+
       return;
     }
 
@@ -126,26 +137,30 @@ export class GameChat extends GameModule {
     ).clientsInLocation.forEach((x) => {
       if (x.id === client.id) return;
 
-      sendMessage(
-        x,
-        TransportCode.MESSAGE_RECEIVED,
-        readyMessage,
-        { message: readyMessage },
-        "CLIENT",
-        client
-      );
+      sendMessage({
+        client: x,
+        code: TransportCode.MESSAGE_RECEIVED,
+        data: {
+          message: readyMessage,
+          character: client.character,
+          type: "say",
+        },
+        initiator: client,
+        initiatorType: "CLIENT",
+      });
     });
 
-    sendMessage(
+    sendMessage({
       client,
-      TransportCode.MESSAGE_SENT,
-      readyMessage,
-      {
+      code: TransportCode.MESSAGE_SENT,
+      data: {
         message: readyMessage,
+        character: client.character,
+        type: "say",
       },
-      "CLIENT",
-      client
-    );
+      initiator: client,
+      initiatorType: "CLIENT",
+    });
   }
 
   public whisper(
@@ -156,51 +171,124 @@ export class GameChat extends GameModule {
     const message = messageChunks.join(" ");
 
     if (!client.auth) {
-      sendMessage(
+      sendMessage({
         client,
-        TransportCode.AUTH_REQUIRED,
-        "You are not authenticated!"
-      );
+        code: TransportCode.AUTH_REQUIRED,
+      });
+
       return;
     }
 
     if (message.length <= 0) {
-      sendMessage(client, TransportCode.ERROR, "Empty message!");
+      sendMessage({ client, code: TransportCode.INCORRECT_MESSAGE });
       return;
     }
 
     if (!client.character) {
-      sendMessage(
+      sendMessage({
         client,
-        TransportCode.CHARACTER_REQUIRED,
-        "You need to select character!"
-      );
+        code: TransportCode.CHARACTER_REQUIRED,
+      });
+
       return;
     }
 
     if (characterName === client.character.name || characterName.length <= 1) {
-      sendMessage(client, TransportCode.NOT_FOUND, "No such character!");
+      sendMessage({ client, code: TransportCode.WRONG_RECIEVER });
       return;
     }
 
     const readyMessage = `${client.character.name} шепчет вам: ${message}`;
     const readyMessageForSender = `Вы шепчете ${characterName}: ${message}`;
 
-    const character = this.context.clients.find(
+    const reciever = this.context.clients.find(
       (x) => x.character?.name === characterName
     );
 
-    if (!character) {
-      sendMessage(client, TransportCode.NOT_FOUND, "No such character!");
+    if (!reciever) {
+      sendMessage({ client, code: TransportCode.WRONG_RECIEVER });
       return;
     }
 
-    sendMessage(character, TransportCode.MESSAGE_RECEIVED, readyMessage, {
-      message: readyMessage,
+    sendMessage({
+      client: reciever,
+      code: TransportCode.MESSAGE_RECEIVED,
+      data: {
+        message: readyMessage,
+      },
+      initiator: client,
+      initiatorType: "CLIENT",
     });
 
-    sendMessage(client, TransportCode.MESSAGE_SENT, readyMessageForSender, {
-      message: readyMessageForSender,
+    sendMessage({
+      client,
+      code: TransportCode.MESSAGE_SENT,
+      data: {
+        message: readyMessageForSender,
+      },
+      initiator: client,
+      initiatorType: "CLIENT",
+    });
+  }
+
+  public me(client: Client, ...messageChunks: string[]): void {
+    const message = messageChunks.join(" ");
+
+    if (!client.auth) {
+      sendMessage({
+        client,
+        code: TransportCode.AUTH_REQUIRED,
+      });
+
+      return;
+    }
+
+    if (message.length <= 0) {
+      sendMessage({ client, code: TransportCode.INCORRECT_MESSAGE });
+      return;
+    }
+
+    if (!client.character) {
+      sendMessage({
+        client,
+        code: TransportCode.CHARACTER_REQUIRED,
+      });
+
+      return;
+    }
+
+    const readyMessage = `${client.character.name} ${message}`;
+
+    const mapModule = this.loadedModules["GameMap"] as GameMap;
+
+    mapModule.MAP_OBJECT.getLocation(
+      client.character!.location as number
+    ).clientsInLocation.forEach((x) => {
+      if (x.id === client.id) return;
+
+      sendMessage({
+        client: x,
+        code: TransportCode.MESSAGE_RECEIVED,
+        data: {
+          message: readyMessage,
+          character: client.character,
+          type: "me",
+        },
+        initiator: client,
+        initiatorType: "CLIENT",
+      });
+    });
+
+    sendMessage({
+      client,
+      code: TransportCode.MESSAGE_SENT,
+      data: {
+        message: readyMessage,
+        character: client.character,
+        type: "me",
+      },
+      initiator: client,
+      initiatorType: "CLIENT",
     });
   }
 }

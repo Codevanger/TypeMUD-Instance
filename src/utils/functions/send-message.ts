@@ -3,27 +3,27 @@ import { Client } from "../types/client.d.ts";
 import { TransportMessage } from "../types/transport-message.d.ts";
 import { log } from "./log.ts";
 
-export function sendMessage<T = null>(
-  client: Client,
-  code: TransportCode,
-  message?: string,
-  data?: T | null,
-  initiatorType: "SERVER" | "CLIENT" = "SERVER",
-  initiator?: Client,
-): void {
+export function sendMessage<T = null>(options: {
+  client: Client;
+  code: TransportCode;
+  data?: T | null;
+  initiatorType?: "SERVER" | "CLIENT";
+  initiator?: Client;
+}): void {
   let generetatedInitiator = null;
 
-  if (initiatorType === "CLIENT") {
-    generetatedInitiator = initiator ? initiator : client;
+  if (options.initiatorType === "CLIENT") {
+    generetatedInitiator = options.initiator
+      ? options.initiator
+      : options.client;
   }
 
   const messagge: TransportMessage<T | null> = {
-    code: code,
-    initiatorType,
+    code: options.code,
+    initiatorType: options.initiatorType ? options.initiatorType : "SERVER",
     initiator: generetatedInitiator,
-    message: message ? message : "",
-    data: data ? data : null,
+    data: options.data ? options.data : null,
   };
 
-  client.websocket.send(JSON.stringify(messagge));
+  options.client.websocket.send(JSON.stringify(messagge));
 }

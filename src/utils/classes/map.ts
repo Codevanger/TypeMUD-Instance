@@ -1,6 +1,7 @@
 import { Client } from "../types/client.d.ts";
 import { Context } from "../types/context.d.ts";
 import { ILocation, ILocationWebsocketFriendly, IMap } from "../types/map.d.ts";
+import { Character } from "./database-models.ts";
 
 export const VOID_LOCATION: ILocation = {
   id: -1,
@@ -34,7 +35,11 @@ export class Location {
 
     const clientsNames = clientsInLocation.map((x) => x.character?.name);
 
-    return `${this._description}\nВ комнате: ${clientsNames.join(", ")}`;
+    return `${this._description}\n\n\nВ комнате: ${clientsNames.join(", ")}`;
+  }
+
+  public charactersInLocation(): Array<Character> {
+    return this.clientsInLocation.map((x) => x.character!);
   }
 
   public get clientsInLocation(): Array<Client> {
