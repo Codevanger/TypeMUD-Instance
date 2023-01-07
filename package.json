@@ -5,7 +5,8 @@
   "scripts": {
     "start:dev": "deno run --config ./deno.json --allow-net --allow-read --allow-write src/main.ts port=5050 tickrate=0.5 showDebug=true showPerfomance=true",
     "start:nodemon": "nodemon --exec \"npm run start:dev\" --ext \"ts,json\"",
-    "build": "deno compile --config ./deno.json --output dist/server  --allow-net src/main.ts --allow-read --allow-write"
+    "build": "deno compile --config ./deno.json --import-map imports.json --allow-net --allow-read --allow-write --output dist/server src/main.ts",
+    "build:linux": "deno compile --target x86_64-unknown-linux-gnu --config ./deno.json --import-map imports.json --allow-net --allow-read --allow-write --output dist/server src/main.ts"
   },
   "author": "",
   "license": "Beerware"

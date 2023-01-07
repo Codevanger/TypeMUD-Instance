@@ -1,6 +1,4 @@
 import { WebSocketServer } from "https://deno.land/x/websocket@v0.1.4/mod.ts";
-import { Character } from "../../utils/classes/database-models.ts";
-
 import { TransportModule } from "../../utils/classes/module.ts";
 import { TransportCode } from "../../utils/classes/transport-codes.ts";
 import { log } from "../../utils/functions/log.ts";
