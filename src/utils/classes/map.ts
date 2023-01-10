@@ -30,16 +30,20 @@ export class Map {
   public getLocation(locationId: number): Location {
     const location = this._locations.find((x) => +x.id === +locationId);
 
+    if (location) {
+      location.rooms = this._rooms.filter((x) => +x.locationId === +locationId);
+    }
+
     return new Location(
       location ? location : VOID_LOCATION,
       this,
-      this.context
+      this.context,
     );
   }
 
   public get rooms(): Room[] {
     return this._rooms.map(
-      (x) => new Room(x, this.getLocation(x.locationId), this.context)
+      (x) => new Room(x, this.getLocation(x.locationId), this.context, this)
     );
   }
 

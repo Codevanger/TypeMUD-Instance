@@ -40,6 +40,6 @@ export class Location {
 
   public getRoom(id: number): Room {
     const room = this._rooms.find((x) => x.id === id);
-    return new Room(room ? room : VOID_ROOM, this, this.context);
+    return new Room(room ? room : VOID_ROOM, this, this.context, this.map);
   }
 }
