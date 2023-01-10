@@ -13,7 +13,7 @@ export class CharacterModule extends GameModule {
 
   commandsToAdd = {
     SELECT: this.select,
-    ME: this.me,
+    MYCHARACTER: this.myCharacter,
   };
 
   constructor(protected context: Context) {
@@ -97,7 +97,7 @@ export class CharacterModule extends GameModule {
     });
   }
 
-  public me(client: Client): void {
+  public myCharacter(client: Client): void {
     if (!client.character) {
       sendMessage({
         client,
