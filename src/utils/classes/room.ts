@@ -59,7 +59,7 @@ export class Room {
   public readonly name: string;
   public readonly description: string;
   public readonly locationId: number;
-  private _exits: Array<IExit> = [];
+  public exits: Array<IExit> = [];
 
   constructor(
     room: IRoom,
@@ -71,6 +71,7 @@ export class Room {
     this.name = room.name;
     this.description = room.description;
     this.locationId = room.locationId;
+    this.exits = room.exits;
   }
 
   public get charactersInRoom(): Array<Character> {
@@ -84,7 +85,7 @@ export class Room {
   }
 
   public getExit(id: number): IExit {
-    const exit = this._exits.find((x) => x.id === id);
+    const exit = this.exits.find((x) => x.id === id);
 
     if (!exit) {
       return {

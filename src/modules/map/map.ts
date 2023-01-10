@@ -16,7 +16,6 @@ export class GameMap extends CoreModule {
   public MAP_OBJECT!: Map;
 
   public commandsToAdd = {
-    CURRENTROOM: this.getCurrentRoom,
     CURRENTLOCATION: this.getCurrentLocation,
     MOVE: this.moveCharacter,
   };
@@ -127,40 +126,6 @@ export class GameMap extends CoreModule {
     });
   };
 
-  public getCurrentRoom(client: Client): void {
-    if (!client.auth) {
-      sendMessage({
-        client,
-        code: TransportCode.AUTH_REQUIRED,
-        initiator: client,
-        initiatorType: "CLIENT",
-      });
-    }
-
-    if (!client.character) {
-      sendMessage({
-        client,
-        code: TransportCode.CHARACTER_REQUIRED,
-        initiator: client,
-        initiatorType: "CLIENT",
-      });
-    }
-
-    const room = this.MAP_OBJECT.getLocation(
-      client.character!.getLocationId()
-    ).getRoom(client.character!.getRoomId());
-
-    sendMessage({
-      client,
-      code: TransportCode.ROOM_INFO,
-      data: {
-        room,
-      },
-      initiator: client,
-      initiatorType: "CLIENT",
-    });
-  }
-
   public getCurrentLocation(client: Client): void {
     if (!client.auth) {
       sendMessage({
@@ -184,11 +149,14 @@ export class GameMap extends CoreModule {
       client.character!.getLocationId()
     );
 
+    const room = location.getRoom(client.character!.getRoomId());
+
     sendMessage({
       client,
       code: TransportCode.LOCATION_INFO,
       data: {
         location,
+        room,
       },
       initiator: client,
       initiatorType: "CLIENT",
@@ -229,6 +197,17 @@ export class GameMap extends CoreModule {
     const newRoom = this.MAP_OBJECT.getLocation(exit.locationId).getRoom(
       exit.roomId
     );
+
+    if (!newRoom) {
+      sendMessage({
+        client,
+        code: TransportCode.CANT_FIND_LOCATION,
+        initiator: client,
+        initiatorType: "CLIENT",
+      });
+
+      return;
+    }
 
     character!.room = exit.roomId;
     character!.location = exit.locationId;

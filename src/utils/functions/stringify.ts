@@ -1,18 +1,8 @@
-// Custom stringify function to handle circular references
+const forbiddenKeys = ["password", "gameserver", "context", "map"];
 export function stringify<T extends object>(data: T): string {
-  const cache = new Set();
   const result = JSON.stringify(data, (key, value) => {
-    if (key === 'password' || key === 'gameserver') return;
-
-    if (typeof value === "object" && value !== null) {
-      if (cache.has(value)) {
-        return;
-      }
-
-      cache.add(value);
-    }
+    if (forbiddenKeys.includes(key)) return;
     return value;
   });
-  cache.clear();
   return result;
 }
