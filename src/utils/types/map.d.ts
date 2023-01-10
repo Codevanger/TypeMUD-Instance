@@ -17,10 +17,11 @@ export declare interface IRoom {
   name: string;
   description: string;
   locationId: number;
-  exits: IExit[];
+  exits: Array<IExit>;
 }
 
 export declare interface IExit {
+  id: number;
   roomId: number;
   locationId?: number;
   direction: "N" | "NE" | "E" | "SE" | "S" | "SW" | "W" | "NW" | "U" | "D";

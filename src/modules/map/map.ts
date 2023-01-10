@@ -66,21 +66,32 @@ export class GameMap extends CoreModule {
       character.location = this.MAP_OBJECT.bootstrap;
     }
 
-    const location = this.MAP_OBJECT.getLocation(character.location as number);
+    const location = this.MAP_OBJECT.getLocation(character.getLocationId());
+
+    if (!character.room || character.room === 0) {
+      character.room = location.bootstrap;
+    }
+
+    const room = location.getRoom(character.getRoomId());
+
+    character.update();
 
     if (!location) {
       return;
     }
 
-    location.clientsInLocation.forEach((x) => {
+    room.clientsInRoom.forEach((x) => {
       if (client.id === x.id) return;
+
+      const voidLocation = this.MAP_OBJECT.getLocation(-1);
 
       sendMessage({
         client: x,
         code: TransportCode.CHARACTER_ENTERED,
         data: {
           character,
-          location: this.MAP_OBJECT.getLocation(-1),
+          location: voidLocation,
+          room: voidLocation.getRoom(1),
         },
         initiatorType: "CLIENT",
         initiator: client,
@@ -89,13 +100,31 @@ export class GameMap extends CoreModule {
   };
 
   public onCharacterLogout = (client: Client, character: Character): void => {
-    const location = this.MAP_OBJECT.getLocation(
+    const room = this.MAP_OBJECT.getLocation(
       character.location as number
     ).getRoom(character.room as number);
 
     if (!location) {
       return;
     }
+
+    room.clientsInRoom.forEach((x) => {
+      if (client.id === x.id) return;
+
+      const voidLocation = this.MAP_OBJECT.getLocation(-1);
+
+      sendMessage({
+        client: x,
+        code: TransportCode.CHARACTER_LEAVED,
+        data: {
+          character,
+          location: voidLocation,
+          room: voidLocation.getRoom(1),
+        },
+        initiatorType: "CLIENT",
+        initiator: client,
+      });
+    });
   };
 
   public getCurrentRoom(client: Client): void {
@@ -166,5 +195,87 @@ export class GameMap extends CoreModule {
     });
   }
 
-  public moveCharacter(client: Client, locationId: number): void {}
+  public moveCharacter(client: Client, exitId: number): void {
+    if (!client.auth) {
+      sendMessage({
+        client,
+        code: TransportCode.AUTH_REQUIRED,
+        initiator: client,
+        initiatorType: "CLIENT",
+      });
+    }
+
+    if (!client.character) {
+      sendMessage({
+        client,
+        code: TransportCode.CHARACTER_REQUIRED,
+        initiator: client,
+        initiatorType: "CLIENT",
+      });
+    }
+
+    const character = client.character;
+
+    const oldRoom = this.MAP_OBJECT.getLocation(
+      character!.getLocationId()
+    ).getRoom(character!.getRoomId());
+
+    const exit = oldRoom.getExit(exitId);
+
+    if (!exit.locationId) {
+      exit.locationId = character!.getLocationId();
+    }
+
+    const newRoom = this.MAP_OBJECT.getLocation(exit.locationId).getRoom(
+      exit.roomId
+    );
+
+    character!.room = exit.roomId;
+    character!.location = exit.locationId;
+
+    character!.update();
+
+    sendMessage({
+      client,
+      code: TransportCode.MOVED,
+      data: {
+        room: newRoom,
+        location: newRoom.location,
+      },
+      initiator: client,
+      initiatorType: "CLIENT",
+    });
+
+    oldRoom.clientsInRoom.forEach((x) => {
+      if (client.id === x.id) return;
+
+      sendMessage({
+        client: x,
+        code: TransportCode.CHARACTER_LEAVED,
+        data: {
+          character,
+          newRoom: newRoom,
+          oldLocation: newRoom.location,
+        },
+        initiatorType: "CLIENT",
+        initiator: client,
+      });
+    });
+
+    newRoom.clientsInRoom.forEach((x) => {
+      if (client.id === x.id) return;
+
+      sendMessage({
+        client: x,
+        code: TransportCode.CHARACTER_ENTERED,
+        data: {
+          character,
+          oldRoom: oldRoom,
+          oldLocation: oldRoom.location,
+        },
+        initiatorType: "CLIENT",
+        initiator: client,
+      });
+    });
+  }
 }
