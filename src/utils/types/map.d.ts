@@ -17,4 +17,11 @@ export declare interface IRoom {
   name: string;
   description: string;
   locationId: number;
+  exits: IExit[];
+}
+
+export declare interface IExit {
+  roomId: number;
+  locationId?: number;
+  direction: "N" | "NE" | "E" | "SE" | "S" | "SW" | "W" | "NW" | "U" | "D";
 }

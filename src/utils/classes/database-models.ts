@@ -55,7 +55,7 @@ export class Instance extends Model {
     },
     port: {
       type: DataTypes.INTEGER,
-    }
+    },
   };
 }
 
@@ -76,12 +76,24 @@ export class Character extends Model {
     },
     location: {
       type: DataTypes.INTEGER,
-      default: 0
+      default: 0,
+    },
+    room: {
+      type: DataTypes.INTEGER,
+      default: 0,
     },
   };
 
   static user() {
     return this.hasOne(User);
+  }
+
+  public getLocationId(): number {
+    return Number(this.location);
+  }
+
+  public getRoomId(): number {
+    return Number(this.room);
   }
 }
 

@@ -1,14 +1,49 @@
+import { Client } from "../types/client.d.ts";
 import { Context } from "../types/context.d.ts";
 import { IRoom } from "../types/map.d.ts";
+import { Character } from "./database-models.ts";
 import { Location } from "./location.ts";
-import { Map } from "./map.ts";
 
 export const VOID_ROOM: IRoom = {
   id: 1,
-  name: "Нигде",
-  locationId: -1, 
-  description: "Вы находитесь нигде.",
-}
+  name: "Пустота",
+  description: "Это пустота.",
+  locationId: -1,
+  exits: [
+    {
+      roomId: 1,
+      direction: "N",
+    },
+    {
+      roomId: 1,
+      direction: "NE",
+    },
+    {
+      roomId: 1,
+      direction: "E",
+    },
+    {
+      roomId: 1,
+      direction: "SE",
+    },
+    {
+      roomId: 1,
+      direction: "S",
+    },
+    {
+      roomId: 1,
+      direction: "SW",
+    },
+    {
+      roomId: 1,
+      direction: "W",
+    },
+    {
+      roomId: 1,
+      direction: "NW",
+    },
+  ],
+};
 
 export class Room {
   public readonly id: number;
@@ -20,7 +55,6 @@ export class Room {
   constructor(
     room: IRoom,
     private location: Location,
-    private map: Map,
     private context: Context
   ) {
     this.id = room.id;
@@ -29,7 +63,17 @@ export class Room {
     this.locationId = room.locationId;
   }
 
-  public get exits(): Array<Location> {
-    return this._exits.map((x) => this.map.getLocation(x));
+  public get charactersInRoom(): Array<Character> {
+    return this.clientsInRoom.map((x) => x.character!);
+  }
+
+  public get clientsInRoom(): Array<Client> {
+    return this.context.clients.filter(
+      (client) => Number(client.character?.location) === this.locationId
+    );
+  }
+
+  public canMoveTo(room: Room): boolean {
+    return this._exits.includes(room.id);
   }
 }

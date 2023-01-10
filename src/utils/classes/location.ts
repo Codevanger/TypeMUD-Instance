@@ -10,25 +10,25 @@ export const VOID_LOCATION: ILocation = {
   name: "Пустота",
   description: "Это пустота.",
   bootstrap: -100,
-  rooms: [VOID_ROOM]
+  rooms: [VOID_ROOM],
 };
 
 export class Location {
   public readonly id: number;
   public readonly name: string;
   public readonly description: string;
-  private readonly _bootstrap: number;
+  public readonly bootstrap: number;
   private readonly _rooms: Array<IRoom> = [];
 
   constructor(location: ILocation, private map: Map, private context: Context) {
     this.id = location.id;
     this.name = location.name;
     this.description = location.description;
-    this._bootstrap = location.bootstrap;
+    this.bootstrap = location.bootstrap;
     this._rooms = location.rooms;
   }
 
-  public charactersInLocation(): Array<Character> {
+  public get charactersInLocation(): Array<Character> {
     return this.clientsInLocation.map((x) => x.character!);
   }
 
@@ -41,6 +41,6 @@ export class Location {
   public getRoom(id: number): Room {
     const room = this._rooms.find((x) => x.id === id);
 
-    return new Room(room ? room : VOID_ROOM, this, this.map, this.context);
+    return new Room(room ? room : VOID_ROOM, this, this.context);
   }
 }

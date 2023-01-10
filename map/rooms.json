@@ -1,110 +1,314 @@
 [
   {
     "id": 1,
-    "name": "Длинная комната комната",
-    "description": "Вы находитесь в начальной комнате.",
-    "locationId": 1
+    "name": "Место с костром",
+    "description": "Место с костром. Сверху виднеется свет - откуда можно упасть сюда",
+    "locationId": 1,
+    "exits": [
+      {
+        "roomId": 2,
+        "direction": "N"
+      }
+    ]
   },
   {
     "id": 2,
-    "name": "Комната с картинами",
-    "description": "Вы находитесь в комнате с картинами. Картины очень старые.",
-    "locationId": 1
+    "name": "Длинная дорога",
+    "description": "Длинная дорога в пещере. Под ногами вы чувствуете гравий и сено.",
+    "locationId": 1,
+    "exits": [
+      {
+        "roomId": 1,
+        "direction": "S"
+      },
+      {
+        "roomId": 3,
+        "direction": "E"
+      }
+    ]
   },
   {
     "id": 3,
-    "name": "Комната с сокровищами",
-    "description": "Вы находитесь в комнате с сокровищами.",
-    "locationId": 1
+    "name": "Восточный коридор",
+    "description": "Восточный коридор. Здесь очень темно.",
+    "locationId": 1,
+    "exits": [
+      {
+        "roomId": 2,
+        "direction": "W"
+      },
+      {
+        "roomId": 4,
+        "direction": "E"
+      },
+      {
+        "roomId": 5,
+        "direction": "N"
+      }
+    ]
   },
   {
     "id": 4,
-    "name": "Комната с книгами",
-    "description": "Вы находитесь в комнате с книгами. Книги очень старые.",
-    "locationId": 1
+    "name": "Место с озером",
+    "description": "Здесь находится пещерное озеро.",
+    "locationId": 1,
+    "exits": [
+      {
+        "roomId": 3,
+        "direction": "W"
+      },
+      {
+        "roomId": 6,
+        "direction": "E"
+      }
+    ]
   },
   {
     "id": 5,
-    "name": "Комната",
-    "description": "Вы находитесь в комнате.",
-    "locationId": 1
+    "name": "Тупиковый коридор",
+    "description": "Тупиковый коридор. Идти отсюда некуда.",
+    "locationId": 1,
+    "exits": [
+      {
+        "roomId": 3,
+        "direction": "S"
+      }
+    ]
   },
   {
     "id": 6,
-    "name": "Комната с люстрой",
-    "description": "Вы находитесь в комнате. На потолке висит люстра",
-    "locationId": 1
+    "name": "Вход в пещеру",
+    "description": "Вход в пещеру. В конце виднеется свет.",
+    "locationId": 1,
+    "exits": [
+      {
+        "roomId": 4,
+        "direction": "W"
+      },
+      {
+        "roomId": 1,
+        "locationId": 2,
+        "direction": "E"
+      }
+    ]
   },
-  {
-    "id": 7,
-    "name": "Комната с дыркой в полу",
-    "description": "Вы находитесь в комнате. На полу дырка.",
-    "locationId": 1
-  },
-  {
-    "id": 8,
-    "name": "Комната встреч",
-    "description": "Вы находитесь в комнате встреч. Здесь можно посидеть.",
-    "locationId": 1
-  },
-  {
-    "id": 9,
-    "name": "Комната с дыркой в потолке",
-    "description": "Вы находитесь в комнате. На потолке дырка.",
-    "locationId": 1
-  },
+
+
   {
     "id": 1,
-    "name": "Начальная комната",
-    "description": "Вы находитесь в начальной комнате.",
-    "locationId": 2
+    "name": "Площадь деревни Говорящего острова",
+    "description": "Вы находитесь на площади деревни Говорящего острова. Здесь никого нет. Пока что.",
+    "locationId": 2,
+    "exits": [
+      {
+        "roomId": 2,
+        "direction": "N"
+      },
+      {
+        "roomId": 3,
+        "direction": "NE"
+      },
+      {
+        "roomId": 4,
+        "direction": "E"
+      },
+      {
+        "roomId": 5,
+        "direction": "SE"
+      },
+      {
+        "roomId": 6,
+        "direction": "S"
+      },
+      {
+        "roomId": 7,
+        "direction": "SW"
+      },
+      {
+        "roomId": 8,
+        "direction": "W"
+      },
+      {
+        "roomId": 9,
+        "direction": "NW"
+      }
+    ]
   },
   {
     "id": 2,
-    "name": "Комната с картинами",
-    "description": "Вы находитесь в комнате с картинами. Картины очень старые.",
-    "locationId": 2
+    "name": "Кузнечный квартал деревни",
+    "description": "Вы находитесь в кузнечном квартале деревни.",
+    "locationId": 2,
+    "exits": [
+      {
+        "roomId": 1,
+        "direction": "S"
+      },
+      {
+        "roomId": 3,
+        "direction": "E"
+      },
+      {
+        "roomId": 9,
+        "direction": "W"
+      }
+    ]
   },
   {
     "id": 3,
-    "name": "Комната с сокровищами",
-    "description": "Вы находитесь в комнате с сокровищами.",
-    "locationId": 2
+    "name": "Квартал ремесленников",
+    "description": "Вы находитесь в квартале ремесленников.",
+    "locationId": 2,
+    "exits": [
+      {
+        "roomId": 1,
+        "direction": "SW"
+      },
+      {
+        "roomId": 2,
+        "direction": "W"
+      },
+      {
+        "roomId": 4,
+        "direction": "S"
+      }
+    ]
   },
   {
     "id": 4,
-    "name": "Комната с книгами",
-    "description": "Вы находитесь в комнате с книгами. Книги очень старые.",
-    "locationId": 2
+    "name": "Квартал торговцев",
+    "description": "Вы находитесь в квартале торговцев.",
+    "locationId": 2,
+    "exits": [
+      {
+        "roomId": 1,
+        "direction": "W"
+      },
+      {
+        "roomId": 3,
+        "direction": "N"
+      },
+      {
+        "roomId": 5,
+        "direction": "S"
+      }
+    ]
   },
   {
     "id": 5,
-    "name": "Комната",
-    "description": "Вы находитесь в комнате.",
-    "locationId": 2
+    "name": "Квартал магов",
+    "description": "Вы находитесь в квартале магов.",
+    "locationId": 2,
+    "exits": [
+      {
+        "roomId": 1,
+        "direction": "NW"
+      },
+      {
+        "roomId": 4,
+        "direction": "N"
+      },
+      {
+        "roomId": 6,
+        "direction": "W"
+      }
+    ]
   },
   {
     "id": 6,
-    "name": "Комната с люстрой",
-    "description": "Вы находитесь в комнате. На потолке висит люстра",
-    "locationId": 2
+    "name": "Квартал воинов",
+    "description": "Вы находитесь в квартале воинов.",
+    "locationId": 2,
+    "exits": [
+      {
+        "roomId": 1,
+        "direction": "N"
+      },
+      {
+        "roomId": 5,
+        "direction": "E"
+      },
+      {
+        "roomId": 7,
+        "direction": "W"
+      }
+    ]
   },
   {
     "id": 7,
-    "name": "Комната с дыркой в полу",
-    "description": "Вы находитесь в комнате. На полу дырка.",
-    "locationId": 2
+    "name": "Квартал монахов",
+    "description": "Вы находитесь в квартале монахов.",
+    "locationId": 2,
+    "exits": [
+      {
+        "roomId": 1,
+        "direction": "NE"
+      },
+      {
+        "roomId": 6,
+        "direction": "E"
+      },
+      {
+        "roomId": 8,
+        "direction": "S"
+      }
+    ]
   },
   {
     "id": 8,
-    "name": "Комната встреч",
-    "description": "Вы находитесь в комнате встреч. Здесь можно посидеть.",
-    "locationId": 2
+    "name": "Квартал жрецов",
+    "description": "Вы находитесь в квартале жрецов.",
+    "locationId": 2,
+    "exits": [
+      {
+        "roomId": 1,
+        "direction": "E"
+      },
+      {
+        "roomId": 7,
+        "direction": "S"
+      },
+      {
+        "roomId": 9,
+        "direction": "N"
+      }
+    ]
   },
   {
     "id": 9,
-    "name": "Комната с дыркой в потолке",
-    "description": "Вы находитесь в комнате. На потолке дырка.",
-    "locationId": 2
+    "name": "Квартал алхимиков",
+    "description": "Вы находитесь в квартале алхимиков.",
+    "locationId": 2,
+    "exits": [
+      {
+        "roomId": 1,
+        "direction": "SE"
+      },
+      {
+        "roomId": 2,
+        "direction": "E"
+      },
+      {
+        "roomId": 8,
+        "direction": "S"
+      }
+    ]
+  },
+  {
+    "id": 10,
+    "name": "Восточная окраина деревни",
+    "description": "Вы находитесь на восточной окраине деревни.",
+    "locationId": 2,
+    "exits": [
+      {
+        "roomId": 8,
+        "direction": "E"
+      },
+      {
+        "roomId": 6,
+        "locationId": 1,
+        "direction": "W"
+      }
+    ]
   }
 ]

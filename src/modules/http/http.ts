@@ -29,6 +29,8 @@ export class GameHttp extends CoreModule {
   private initHttpServer(): void {
     if (!this.context.params?.port) return;
 
+    console.log(this.context.params);
+
     try {
       serve(this.handler.bind(this), { 
         port: this.context.params.port + 1, 
