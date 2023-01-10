@@ -82,6 +82,44 @@ export class Character extends Model {
       type: DataTypes.INTEGER,
       default: 0,
     },
+    friends: {
+      type: DataTypes.JSON,
+    },
+    level: {
+      type: DataTypes.INTEGER,
+      default: 1,
+    },
+    experience: {
+      type: DataTypes.INTEGER,
+      default: 0,
+    },
+    health: {
+      type: DataTypes.INTEGER,
+      default: 100,
+    },
+    stamina: {
+      type: DataTypes.INTEGER,
+      default: 100,
+    },
+    stats: {
+      type: DataTypes.JSON,
+      default: {
+        str: 1, // Strength
+        dex: 1, // Dexterity
+        vit: 1, // Vitality
+        end: 1, // Endurance
+        int: 1, // Intelligence
+        wis: 1, // Wisdom
+      },
+    },
+    skills: {
+      type: DataTypes.JSON,
+      default: [],
+    },
+    money: {
+      type: DataTypes.INTEGER,
+      default: 0,
+    }
   };
 
   static user() {
