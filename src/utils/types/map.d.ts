@@ -4,14 +4,17 @@ export declare interface IMap {
   bootstrap: number;
 }
 
-
 export declare interface ILocation {
   id: number;
   name: string;
   description: string;
-  exits: Array<number>;
+  bootstrap: number;
+  rooms: Array<IRoom>;
 }
 
-export declare interface ILocationWebsocketFriendly extends ILocation {
-  expandedExits: Array<ILocation>;
+export declare interface IRoom {
+  id: number;
+  name: string;
+  description: string;
+  locationId: number;
 }

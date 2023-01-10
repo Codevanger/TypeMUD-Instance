@@ -1,1 +1,5 @@
-{"name":"Default map","description":"Default map description","bootstrap": 1}
+{
+  "name": "Карта по умолчанию",
+  "description": "Описание по умолчанию",
+  "bootstrap": 1
+}

@@ -63,7 +63,7 @@ export class GameMap extends CoreModule {
     const map: IMap = {
       name: "Тестовая карта",
       description: "Тестовая карта",
-      bootstrap: -1,
+      bootstrapLocation: -1,
     };
 
     await Deno.mkdir("./map");
