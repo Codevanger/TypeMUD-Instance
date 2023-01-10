@@ -18,14 +18,14 @@ export class Location {
   public readonly name: string;
   public readonly description: string;
   public readonly bootstrap: number;
-  private readonly _rooms: Array<IRoom> = [];
+  public readonly rooms: Array<IRoom> = [];
 
   constructor(location: ILocation, private map: Map, private context: Context) {
     this.id = location.id;
     this.name = location.name;
     this.description = location.description;
     this.bootstrap = location.bootstrap;
-    this._rooms = location.rooms;
+    this.rooms = location.rooms;
   }
 
   public get charactersInLocation(): Array<Character> {
@@ -39,7 +39,7 @@ export class Location {
   }
 
   public getRoom(id: number): Room {
-    const room = this._rooms.find((x) => x.id === id);
+    const room = this.rooms.find((x) => x.id === id);
     return new Room(room ? room : VOID_ROOM, this, this.context, this.map);
   }
 }

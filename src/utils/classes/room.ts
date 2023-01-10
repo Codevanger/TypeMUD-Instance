@@ -71,7 +71,12 @@ export class Room {
     this.name = room.name;
     this.description = room.description;
     this.locationId = room.locationId;
-    this.exits = room.exits;
+    this.exits = room.exits.map((x) => {
+      return {
+        ...x,
+        locationId: x.locationId ? x.locationId : this.locationId,
+      };
+    });
   }
 
   public get charactersInRoom(): Array<Character> {
@@ -85,7 +90,7 @@ export class Room {
   }
 
   public getExit(id: number): IExit {
-    const exit = this.exits.find((x) => x.id === id);
+    const exit = this.exits.find((x) => x.id === Number(id));
 
     if (!exit) {
       return {

@@ -34,10 +34,16 @@ export class Map {
       location.rooms = this._rooms.filter((x) => +x.locationId === +locationId);
     }
 
+    location?.rooms.forEach((room) => {
+      room.exits.forEach((exit) => {
+        exit.locationId = exit.locationId ? exit.locationId : room.locationId;
+      });
+    });
+
     return new Location(
       location ? location : VOID_LOCATION,
       this,
-      this.context,
+      this.context
     );
   }
 

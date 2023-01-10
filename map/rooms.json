@@ -24,6 +24,7 @@
         "direction": "S"
       },
       {
+        "id": 2,
         "roomId": 3,
         "direction": "E"
       }
@@ -96,7 +97,7 @@
       },
       {
         "id": 2,
-        "roomId": 1,
+        "roomId": 10,
         "locationId": 2,
         "direction": "E"
       }
@@ -285,7 +286,7 @@
       {
         "id": 3,
         "roomId": 8,
-        "direction": "S"
+        "direction": "N"
       }
     ]
   },
@@ -309,6 +310,11 @@
         "id": 3,
         "roomId": 9,
         "direction": "N"
+      },
+      {
+        "id": 4,
+        "roomId": 10,
+        "direction": "W"
       }
     ]
   },
