@@ -62,8 +62,6 @@ export class GameChat extends GameModule {
       return;
     }
 
-    const readyMessage = `[${client.character.name}] кричит: ${message}`;
-
     const mapModule = this.loadedModules["GameMap"] as GameMap;
 
     const playerLocation = mapModule.MAP_OBJECT.getLocation(
@@ -79,7 +77,7 @@ export class GameChat extends GameModule {
           client: x,
           code: TransportCode.MESSAGE_RECEIVED,
           data: {
-            message: readyMessage,
+            message: message,
             character: client.character,
             type: "shout",
           },
@@ -93,7 +91,7 @@ export class GameChat extends GameModule {
       client,
       code: TransportCode.MESSAGE_SENT,
       data: {
-        message: readyMessage,
+        message: message,
         character: client.character,
         type: "shout",
       },
@@ -128,8 +126,6 @@ export class GameChat extends GameModule {
       return;
     }
 
-    const readyMessage = `${client.character.name} говорит: ${message}`;
-
     const mapModule = this.loadedModules["GameMap"] as GameMap;
 
     mapModule.MAP_OBJECT.getLocation(
@@ -141,7 +137,7 @@ export class GameChat extends GameModule {
         client: x,
         code: TransportCode.MESSAGE_RECEIVED,
         data: {
-          message: readyMessage,
+          message: message,
           character: client.character,
           type: "say",
         },
@@ -154,7 +150,7 @@ export class GameChat extends GameModule {
       client,
       code: TransportCode.MESSAGE_SENT,
       data: {
-        message: readyMessage,
+        message: message,
         character: client.character,
         type: "say",
       },
@@ -198,9 +194,6 @@ export class GameChat extends GameModule {
       return;
     }
 
-    const readyMessage = `${client.character.name} шепчет вам: ${message}`;
-    const readyMessageForSender = `Вы шепчете ${characterName}: ${message}`;
-
     const reciever = this.context.clients.find(
       (x) => x.character?.name === characterName
     );
@@ -214,7 +207,7 @@ export class GameChat extends GameModule {
       client: reciever,
       code: TransportCode.MESSAGE_RECEIVED,
       data: {
-        message: readyMessage,
+        message: message,
       },
       initiator: client,
       initiatorType: "CLIENT",
@@ -224,7 +217,7 @@ export class GameChat extends GameModule {
       client,
       code: TransportCode.MESSAGE_SENT,
       data: {
-        message: readyMessageForSender,
+        message: message,
       },
       initiator: client,
       initiatorType: "CLIENT",

@@ -91,7 +91,7 @@ export class GameMap extends CoreModule {
         client: x,
         code: TransportCode.CHARACTER_ENTERED,
         data: {
-          character: client.character,
+          character,
           location: this.MAP_OBJECT.getLocation(-1),
         },
         initiatorType: "CLIENT",
@@ -114,8 +114,8 @@ export class GameMap extends CoreModule {
         client: x,
         code: TransportCode.CHARACTER_LEAVED,
         data: {
-          character: client.character,
-          location: this.MAP_OBJECT.getLocation(-1)
+          character,
+          location: this.MAP_OBJECT.getLocation(-1),
         },
         initiatorType: "CLIENT",
         initiator: client,
