@@ -1,6 +1,9 @@
 import { DataModule } from "../../utils/classes/module.ts";
 import { Context } from "../../utils/types/context.d.ts";
-import { Database, SQLite3Connector } from "https://deno.land/x/denodb@v1.1.0/mod.ts";
+import {
+  Database,
+  MySQLConnector,
+} from "https://deno.land/x/denodb@v1.2.0/mod.ts";
 import { log } from "../../utils/functions/log.ts";
 import { DATABASE_MODELS } from "../../utils/classes/database-models.ts";
 
@@ -37,8 +40,16 @@ export class GameDatabase extends DataModule {
 
   private initDB(): void {
     try {
-      const connector = new SQLite3Connector({
-        filepath: "../db/server.sqlite",
+      const connector = new MySQLConnector({
+        database: "game",
+        host: "localhost",
+        username: "root",
+        password: "qwerty123",
+        charset: "utf8mb4",
+        logger: {
+          enable: true,
+          level: "INFO",
+        },
       });
 
       this.DB = new Database(connector);

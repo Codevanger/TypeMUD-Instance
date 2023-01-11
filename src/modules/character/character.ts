@@ -60,7 +60,7 @@ export class CharacterModule extends GameModule {
       return;
     }
 
-    const character = await Character.where("id", characterId).first();
+    const character = await Character.where("characterId", characterId).first();
 
     if (!character) {
       sendMessage({

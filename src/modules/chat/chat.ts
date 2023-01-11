@@ -11,7 +11,7 @@ export class GameChat extends GameModule {
     SAY: this.say,
     SHOUT: this.shout,
     WHISPER: this.whisper,
-    ME: this.me
+    ME: this.me,
   };
 
   public dependencies = [GameMap];
@@ -61,43 +61,6 @@ export class GameChat extends GameModule {
 
       return;
     }
-
-    const mapModule = this.loadedModules["GameMap"] as GameMap;
-
-    const playerLocation = mapModule.MAP_OBJECT.getLocation(
-      client.character!.location as number
-    );
-    const locations = [...playerLocation.exits];
-    locations.push(playerLocation);
-    locations.forEach((location) => {
-      location.clientsInLocation.forEach((x) => {
-        if (x.id === client.id) return;
-
-        sendMessage({
-          client: x,
-          code: TransportCode.MESSAGE_RECEIVED,
-          data: {
-            message: message,
-            character: client.character,
-            type: "shout",
-          },
-          initiator: client,
-          initiatorType: "CLIENT",
-        });
-      });
-    });
-
-    sendMessage({
-      client,
-      code: TransportCode.MESSAGE_SENT,
-      data: {
-        message: message,
-        character: client.character,
-        type: "shout",
-      },
-      initiator: client,
-      initiatorType: "CLIENT",
-    });
   }
 
   public say(client: Client, ...messageChunks: string[]): void {
@@ -125,38 +88,6 @@ export class GameChat extends GameModule {
 
       return;
     }
-
-    const mapModule = this.loadedModules["GameMap"] as GameMap;
-
-    mapModule.MAP_OBJECT.getLocation(
-      client.character!.location as number
-    ).clientsInLocation.forEach((x) => {
-      if (x.id === client.id) return;
-
-      sendMessage({
-        client: x,
-        code: TransportCode.MESSAGE_RECEIVED,
-        data: {
-          message: message,
-          character: client.character,
-          type: "say",
-        },
-        initiator: client,
-        initiatorType: "CLIENT",
-      });
-    });
-
-    sendMessage({
-      client,
-      code: TransportCode.MESSAGE_SENT,
-      data: {
-        message: message,
-        character: client.character,
-        type: "say",
-      },
-      initiator: client,
-      initiatorType: "CLIENT",
-    });
   }
 
   public whisper(
@@ -202,26 +133,6 @@ export class GameChat extends GameModule {
       sendMessage({ client, code: TransportCode.WRONG_RECIEVER });
       return;
     }
-
-    sendMessage({
-      client: reciever,
-      code: TransportCode.MESSAGE_RECEIVED,
-      data: {
-        message: message,
-      },
-      initiator: client,
-      initiatorType: "CLIENT",
-    });
-
-    sendMessage({
-      client,
-      code: TransportCode.MESSAGE_SENT,
-      data: {
-        message: message,
-      },
-      initiator: client,
-      initiatorType: "CLIENT",
-    });
   }
 
   public me(client: Client, ...messageChunks: string[]): void {

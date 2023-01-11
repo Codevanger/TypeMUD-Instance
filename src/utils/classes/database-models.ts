@@ -1,18 +1,18 @@
 import {
   DataTypes,
   Model,
-  Relationships,
-} from "https://deno.land/x/denodb@v1.1.0/mod.ts";
+  Relationships
+} from "https://deno.land/x/denodb@v1.2.0/mod.ts";
 
 export class User extends Model {
   static table = "users";
-  static timestamps = true;
 
   static fields = {
-    id: {
+    userId: {
       type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true,
+      as: "userId",
     },
     username: {
       type: DataTypes.STRING,
@@ -25,6 +25,7 @@ export class User extends Model {
     },
     role: {
       type: DataTypes.INTEGER,
+      default: 0,
     },
   };
 
@@ -35,18 +36,19 @@ export class User extends Model {
 
 export class Instance extends Model {
   static table = "instances";
-  static timestamps = true;
 
   static fields = {
-    id: {
+    instanceId: {
       primaryKey: true,
       autoIncrement: true,
       type: DataTypes.INTEGER,
+      as: "instanceId",
     },
-    game_name: {
+    gameName: {
       type: DataTypes.STRING,
       length: 255,
       unique: true,
+      as: "gameName",
     },
     url: {
       type: DataTypes.STRING,
@@ -61,13 +63,13 @@ export class Instance extends Model {
 
 export class Character extends Model {
   static table = "characters";
-  static timestamps = true;
 
   static fields = {
-    id: {
+    characterId: {
       primaryKey: true,
       autoIncrement: true,
       type: DataTypes.INTEGER,
+      as: "characterId",
     },
     name: {
       type: DataTypes.STRING,
@@ -101,6 +103,10 @@ export class Character extends Model {
       type: DataTypes.INTEGER,
       default: 100,
     },
+    mana: {
+      type: DataTypes.INTEGER,
+      default: 100,
+    },
     stats: {
       type: DataTypes.JSON,
       default: {
@@ -116,13 +122,17 @@ export class Character extends Model {
       type: DataTypes.JSON,
       default: [],
     },
+    inventory: {
+      type: DataTypes.JSON,
+      default: [],
+    },
     money: {
       type: DataTypes.INTEGER,
       default: 0,
     }
   };
 
-  static user() {
+  public static user() {
     return this.hasOne(User);
   }
 

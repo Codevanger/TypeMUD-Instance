@@ -57,7 +57,7 @@ export class AuthModule extends CoreModule {
     if (auth) {
       const [, payload] = decode(token) as [unknown, ITokenPayload, unknown];
 
-      const user = await User.where("id", payload.id).first();
+      const user = await User.where("userId", payload.userId).first();
 
       if (!user || user.username !== payload.username) {
         sendMessage({
@@ -71,7 +71,7 @@ export class AuthModule extends CoreModule {
       }
 
       const interfaringClient = this.context.clients.find(
-        (x) => x.id === payload.id
+        (x) => x.userId === payload.userId
       );
       if (interfaringClient) {
         sendMessage({
@@ -85,14 +85,14 @@ export class AuthModule extends CoreModule {
       }
 
       client.auth = true;
-      client.id = payload.id;
+      client.id = payload.userId;
       client.user = user;
 
       sendMessage({
         client: client,
         code: TransportCode.AUTHENTICATED,
         data: {
-          id: client.id,
+          userId: client.id,
           user: client.user,
         },
       });
