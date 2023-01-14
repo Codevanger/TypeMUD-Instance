@@ -12,7 +12,7 @@ import { sendMessage } from "../../utils/functions/send-message.ts";
 /**
  * Module for authentication
  */
-export class AuthModule extends CoreModule {
+export class CoreAuth extends CoreModule {
   public priority = -1;
 
   public commandsToAdd = {
@@ -71,7 +71,7 @@ export class AuthModule extends CoreModule {
       }
 
       const interfaringClient = this.context.clients.find(
-        (x) => x.userId === payload.userId
+        (x) => x.id === payload.userId
       );
       if (interfaringClient) {
         sendMessage({

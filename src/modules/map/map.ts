@@ -73,8 +73,6 @@ export class GameMap extends CoreModule {
 
     const room = location.getRoom(character.getRoomId());
 
-    character.update();
-
     if (!location) {
       return;
     }

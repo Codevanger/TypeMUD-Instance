@@ -6,7 +6,7 @@ import { Context } from "../../utils/types/context.d.ts";
 /**
  * Web server module.
  */
-export class GameHttp extends CoreModule {
+export class CoreHttp extends CoreModule {
   public priority = 100;
 
   constructor(protected context: Context) {

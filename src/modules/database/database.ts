@@ -10,7 +10,7 @@ import { DATABASE_MODELS } from "../../utils/classes/database-models.ts";
 /**
  * Module for database connection
  */
-export class GameDatabase extends DataModule {
+export class DataBase extends DataModule {
   public priority = -1;
 
   private DB!: Database;

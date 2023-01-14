@@ -8,7 +8,7 @@ import { Context } from "../../utils/types/context.d.ts";
 /**
  * Character management module
  */
-export class CharacterModule extends GameModule {
+export class GameCharacter extends GameModule {
   public priority = 100;
 
   commandsToAdd = {
@@ -60,7 +60,7 @@ export class CharacterModule extends GameModule {
       return;
     }
 
-    const character = await Character.where("characterId", characterId).first();
+    const character: Character = await Character.where("characterId", characterId).first() as Character;
 
     if (!character) {
       sendMessage({

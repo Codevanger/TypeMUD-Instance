@@ -1,7 +1,7 @@
 import {
   DataTypes,
   Model,
-  Relationships
+  Relationships,
 } from "https://deno.land/x/denodb@v1.2.0/mod.ts";
 
 export class User extends Model {
@@ -26,6 +26,12 @@ export class User extends Model {
     role: {
       type: DataTypes.INTEGER,
       default: 0,
+    },
+    key: {
+      type: DataTypes.STRING,
+      length: 255,
+      unique: true,
+      default: '00000-00000-00000'
     },
   };
 
@@ -84,9 +90,6 @@ export class Character extends Model {
       type: DataTypes.INTEGER,
       default: 0,
     },
-    friends: {
-      type: DataTypes.JSON,
-    },
     level: {
       type: DataTypes.INTEGER,
       default: 1,
@@ -94,6 +97,11 @@ export class Character extends Model {
     experience: {
       type: DataTypes.INTEGER,
       default: 0,
+    },
+    freeStats: {
+      type: DataTypes.INTEGER,
+      default: 3,
+      as: 'freeStats'
     },
     health: {
       type: DataTypes.INTEGER,
@@ -129,11 +137,15 @@ export class Character extends Model {
     money: {
       type: DataTypes.INTEGER,
       default: 0,
-    }
+    },
   };
 
   public static user() {
     return this.hasOne(User);
+  }
+
+  public static friends(): Promise<Character[]> {
+    return this.hasMany(Character) as Promise<Character[]>;
   }
 
   public getLocationId(): number {
@@ -142,6 +154,44 @@ export class Character extends Model {
 
   public getRoomId(): number {
     return Number(this.room);
+  }
+
+  public getParsedStats(): { [key: string]: number } {
+    return JSON.parse(this.stats as string);
+  }
+
+  public getStat(stat: string): number {
+    return this.getParsedStats()[stat];
+  }
+
+  public getMaxHealth(): number {
+    return Math.floor(
+      100 + this.getStat("vit") * 10 + Math.max(this.getStat("end") * 0.5)
+    );
+  }
+
+  public getHealthRegen(): number {
+    return Math.floor(this.getStat("vit") * 2);
+  }
+
+  public getMaxStamina(): number {
+    return Math.floor(
+      100 + this.getStat("end") * 10 + Math.max(this.getStat("vit") * 0.5)
+    );
+  }
+
+  public getStaminaRegen(): number {
+    return Math.floor(this.getStat("end") * 2);
+  }
+
+  public getMaxMana(): number {
+    return Math.floor(
+      100 + this.getStat("int") * 10 + Math.max(this.getStat("wis") * 0.5)
+    );
+  }
+
+  public getManaRegen(): number {
+    return Math.floor(this.getStat("int") * 2);
   }
 }
 

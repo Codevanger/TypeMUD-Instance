@@ -5,12 +5,12 @@ import { log } from "../../utils/functions/log.ts";
 import { sendMessage } from "../../utils/functions/send-message.ts";
 import { Context } from "../../utils/types/context.d.ts";
 import { Priority } from "../../utils/types/priority.d.ts";
-import { GameDatabase } from "../database/database.ts";
+import { DataBase } from "../database/database.ts";
 
 export class WebSocketTransport extends TransportModule {
   private wsServer!: WebSocketServer;
   public priority: Priority = 0;
-  public dependencies = [GameDatabase];
+  public dependencies = [DataBase];
 
   constructor(protected context: Context) {
     super(context);
