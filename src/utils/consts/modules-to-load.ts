@@ -8,6 +8,7 @@ import { GameMap } from "../../modules/map/map.ts";
 import { GameChat } from "../../modules/chat/chat.ts";
 import { GameFriends } from "../../modules/friends/friends.ts";
 import { GameStats } from "../../modules/stats/stats.ts";
+import { GameExperience } from "../../modules/experience/experience.ts";
 
 export const MODULES_TO_LOAD: Array<Module> = [
   DataBase,
@@ -19,4 +20,5 @@ export const MODULES_TO_LOAD: Array<Module> = [
   GameChat,
   GameFriends,
   GameStats,
+  GameExperience,
 ];

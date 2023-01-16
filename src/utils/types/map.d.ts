@@ -17,6 +17,7 @@ export declare interface IRoom {
   name: string;
   description: string;
   locationId: number;
+  entities: number[];
   exits: Array<IExit>;
 }
 

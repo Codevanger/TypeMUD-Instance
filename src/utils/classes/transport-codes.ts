@@ -44,4 +44,6 @@ export enum TransportCode {
   // STATS
   STATS_CHANGED = 6000,
   NOT_ENOUGH_POINT,
+  // EXPERIENCE
+  LEVEL_UP = 7000,
 }

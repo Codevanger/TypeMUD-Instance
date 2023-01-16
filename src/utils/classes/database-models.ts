@@ -115,6 +115,10 @@ export class Character extends Model {
       type: DataTypes.INTEGER,
       default: 100,
     },
+    inFight: {
+      type: DataTypes.BOOLEAN,
+      default: false,
+    },
     stats: {
       type: DataTypes.JSON,
       default: {

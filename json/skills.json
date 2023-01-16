@@ -1,0 +1,25 @@
+[
+  {
+    "id": 1,
+    "name": "Удар",
+    "description": "Обычный удар",
+    "fight": true,
+    "depends": {
+      "damage": {
+        "str": 2,
+        "dex": 0.5
+      }
+    }
+  },
+  {
+    "id": 2,
+    "name": "Золотой дождь",
+    "desceription": "Даёт 100 золота",
+    "fight": false,
+    "requires": {
+      "stats": {
+        "int": 1
+      }
+    }
+  }
+]

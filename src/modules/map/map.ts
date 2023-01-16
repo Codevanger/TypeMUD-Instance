@@ -28,8 +28,8 @@ export class GameMap extends CoreModule {
   }
 
   public canLoad(): boolean {
-    if (this.loadedModulesNames.find((x) => x === "Map")) {
-      throw new Error("Can't load Map module twice!");
+    if (this.loadedModulesNames.find((x) => x === "GameMap")) {
+      throw new Error("Can't load GameMap module twice!");
     }
 
     super.canLoad();
@@ -45,9 +45,9 @@ export class GameMap extends CoreModule {
     let rooms: IRoom[];
 
     try {
-      map = JSON.parse(await Deno.readTextFile("./map/map.json"));
-      locations = JSON.parse(await Deno.readTextFile("./map/locations.json"));
-      rooms = JSON.parse(await Deno.readTextFile("./map/rooms.json"));
+      map = JSON.parse(await Deno.readTextFile("./json/map.json"));
+      locations = JSON.parse(await Deno.readTextFile("./json/locations.json"));
+      rooms = JSON.parse(await Deno.readTextFile("./json/rooms.json"));
     } catch (_) {
       log("ERROR", "Map file not found");
       throw new Error(
