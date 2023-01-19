@@ -154,8 +154,12 @@ export class Character extends Model {
     },
   };
 
-  public static user() {
+  public static user(): Promise<User> {
     return this.hasOne(User);
+  }
+
+  public getFriends(): number[] {
+    return JSON.parse(this.friends as string);
   }
 
   public getLocationId(): number {

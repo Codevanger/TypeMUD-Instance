@@ -29,64 +29,58 @@ export class GameFriends extends GameModule {
   }
 
   public async friends(client: Client): Promise<void> {
-    if (!client.auth) {
-      sendMessage({
-        client,
-        code: TransportCode.AUTH_REQUIRED,
-      });
-
-      return;
-    }
-
     if (!client.character) {
       sendMessage({
         client,
-        code: TransportCode.CHARACTER_REQUIRED,
+        code: TransportCode.CHARACTER_NOT_FOUND,
       });
-
-      return;
     }
 
-    const friends = await Character.friends();
+    const friendsIdArray = client.character!.getFriends();
+    const friends = await Promise.all(
+      friendsIdArray.map(async (id) => {
+        const friend = await Character.where({ characterId: id }).first();
+
+        return friend;
+      })
+    );
 
     sendMessage({
       client,
       code: TransportCode.FRIEND_LIST,
       data: {
-        friends: friends.map((x) => {
-          return {
-            character: x,
-            online: this.context.clients.find((y) => y.character?.id === x.id)
-              ? true
-              : false,
-          };
-        }),
+        friends: friends.map((friend) => ({
+          character: friend!.name,
+          online: this.context.clients.find(
+            (x) => x.character?.name === friend!.name
+          )
+            ? true
+            : false,
+        })),
       },
-      initiator: client,
-      initiatorType: "CLIENT",
     });
   }
 
   public async addFriend(client: Client, name: string): Promise<void> {
-    if (!client.auth) {
-      sendMessage({
-        client,
-        code: TransportCode.AUTH_REQUIRED,
-      });
-
-      return;
-    }
-
     if (!client.character) {
       sendMessage({
         client,
-        code: TransportCode.CHARACTER_REQUIRED,
+        code: TransportCode.CHARACTER_NOT_FOUND,
       });
 
       return;
     }
 
-    const friend = await Character.where("name", name).first();
+    if (client.character.name === name) {
+      sendMessage({
+        client,
+        code: TransportCode.FRIEND_NOT_FOUND,
+      });
+
+      return;
+    }
+
+    const friend = await Character.where({ name }).first();
 
     if (!friend) {
       sendMessage({
@@ -97,12 +91,73 @@ export class GameFriends extends GameModule {
       return;
     }
 
-    console.log({
-      friend,
-      friends: client.character.friends,
-      user: client.user,
+    if (client.character.getFriends().includes(friend!.characterId as number)) {
+      sendMessage({
+        client,
+        code: TransportCode.FRIEND_ALREADY_ADDED,
+      });
+
+      return;
+    }
+
+    client.character.friends = JSON.stringify([
+      ...client.character.getFriends(),
+      friend!.characterId as number,
+    ]);
+
+    sendMessage({
+      client,
+      code: TransportCode.FRIEND_ADDED,
+      data: {
+        name: friend.name,
+        characterId: friend.characterId,
+      },
+      initiator: client,
+      initiatorType: "CLIENT",
     });
   }
 
-  public async removeFriend(client: Client, name: string): Promise<void> {}
+  public async removeFriend(client: Client, name: string): Promise<void> {
+    if (!client.character) {
+      sendMessage({
+        client,
+        code: TransportCode.CHARACTER_NOT_FOUND,
+      });
+
+      return;
+    }
+
+    const friend = await Character.where({ name }).first();
+
+    if (!friend) {
+      sendMessage({
+        client,
+        code: TransportCode.FRIEND_NOT_FOUND,
+      });
+
+      return;
+    }
+
+    if (
+      !client.character.getFriends().includes(friend!.characterId as number)
+    ) {
+      sendMessage({
+        client,
+        code: TransportCode.FRIEND_NOT_FOUND,
+      });
+
+      return;
+    }
+
+    client.character.friends = JSON.stringify(
+      client.character.getFriends().filter((x) => x !== friend!.characterId)
+    );
+
+    sendMessage({
+      client,
+      code: TransportCode.FRIEND_REMOVED,
+      initiator: client,
+      initiatorType: "CLIENT",
+    });
+  }
 }
