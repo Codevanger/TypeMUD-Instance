@@ -28,27 +28,44 @@ export class GameStats extends GameModule {
   public onServerIteration = (): void => {
     this.context.clients.forEach((client) => {
       if (client.character) {
-        client.character.health =
-          (client.character.health! as number) +
-          client.character.getHealthRegen();
+        let changed = false;
 
-        if (client.character.health! > client.character.getMaxHealth()) {
-          client.character.health = client.character.getMaxHealth();
+        if (client.character.health! < client.character.getMaxHealth()) {
+          client.character.health =
+            (client.character.health! as number) +
+            client.character.getHealthRegen();
+
+          if (client.character.health! > client.character.getMaxHealth()) {
+            client.character.health = client.character.getMaxHealth();
+          }
+
+          changed = true;
         }
 
-        client.character.mana =
-          (client.character.mana! as number) + client.character.getManaRegen();
+        if (client.character.mana! < client.character.getMaxMana()) {
+          client.character.mana =
+            (client.character.mana! as number) +
+            client.character.getManaRegen();
 
-        if (client.character.mana! > client.character.getMaxMana()) {
-          client.character.mana = client.character.getMaxMana();
+          if (client.character.mana! > client.character.getMaxMana()) {
+            client.character.mana = client.character.getMaxMana();
+          }
+
+          changed = true;
         }
 
-        client.character.stamina =
-          (client.character.stamina! as number) +
-          client.character.getStaminaRegen();
+        if (client.character.stamina! < client.character.getMaxStamina()) {
+          client.character.stamina =
+            (client.character.stamina! as number) +
+            client.character.getStaminaRegen();
 
-        if (client.character.stamina! > client.character.getMaxStamina()) {
-          client.character.stamina = client.character.getMaxStamina();
+          if (client.character.stamina! > client.character.getMaxStamina()) {
+            client.character.stamina = client.character.getMaxStamina();
+          }
+        }
+
+        if (!changed) {
+          return;
         }
 
         sendMessage({
