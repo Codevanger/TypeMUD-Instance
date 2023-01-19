@@ -1,1 +1,1 @@
-# BloodMRL-Instance
+# TypeMUD-Instance
