@@ -118,6 +118,12 @@ export class Character extends Model {
     inFight: {
       type: DataTypes.BOOLEAN,
       default: false,
+      as: 'inFight'
+    },
+    fightId: {
+      type: DataTypes.INTEGER,
+      default: 0,
+      as: 'fightId'
     },
     stats: {
       type: DataTypes.JSON,
@@ -138,6 +144,10 @@ export class Character extends Model {
       type: DataTypes.JSON,
       default: [],
     },
+    friends: {
+      type: DataTypes.JSON,
+      default: [],
+    },
     money: {
       type: DataTypes.INTEGER,
       default: 0,
@@ -146,10 +156,6 @@ export class Character extends Model {
 
   public static user() {
     return this.hasOne(User);
-  }
-
-  public static friends(): Promise<Character[]> {
-    return this.hasMany(Character) as Promise<Character[]>;
   }
 
   public getLocationId(): number {
