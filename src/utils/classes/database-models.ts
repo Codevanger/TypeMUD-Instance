@@ -31,7 +31,7 @@ export class User extends Model {
       type: DataTypes.STRING,
       length: 255,
       unique: true,
-      default: '00000-00000-00000'
+      default: "00000-00000-00000",
     },
   };
 
@@ -101,7 +101,7 @@ export class Character extends Model {
     freeStats: {
       type: DataTypes.INTEGER,
       default: 3,
-      as: 'freeStats'
+      as: "freeStats",
     },
     health: {
       type: DataTypes.INTEGER,
@@ -118,12 +118,12 @@ export class Character extends Model {
     inFight: {
       type: DataTypes.BOOLEAN,
       default: false,
-      as: 'inFight'
+      as: "inFight",
     },
     fightId: {
       type: DataTypes.INTEGER,
       default: 0,
-      as: 'fightId'
+      as: "fightId",
     },
     stats: {
       type: DataTypes.JSON,
@@ -151,6 +151,10 @@ export class Character extends Model {
     money: {
       type: DataTypes.INTEGER,
       default: 0,
+    },
+    online: {
+      type: DataTypes.BOOLEAN,
+      default: false,
     },
   };
 
