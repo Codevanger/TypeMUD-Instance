@@ -35,15 +35,6 @@ export class GameChat extends GameModule {
   public shout(client: Client, ...messageChunks: string[]): void {
     const message = messageChunks.join(" ");
 
-    if (!client.auth) {
-      sendMessage({
-        client,
-        code: TransportCode.AUTH_REQUIRED,
-      });
-
-      return;
-    }
-
     if (message.length <= 0) {
       sendMessage({
         client,
@@ -61,6 +52,49 @@ export class GameChat extends GameModule {
 
       return;
     }
+
+    const map = this.loadedModules["GameMap"] as GameMap;
+
+    const location = map.MAP_OBJECT.getLocation(
+      client.character.getLocationId()
+    );
+
+    if (!location) {
+      sendMessage({
+        client,
+        code: TransportCode.WRONG_RECIEVER,
+      });
+
+      return;
+    }
+
+    location.clientsInLocation.forEach((client) => {
+      if (client.character!.characterId === client.character!.characterId) {
+        return;
+      }
+
+      sendMessage({
+        client: client,
+        code: TransportCode.MESSAGE_RECEIVED,
+        data: {
+          message,
+          messageType: "shout",
+        },
+        initiator: client,
+        initiatorType: "CLIENT",
+      });
+    });
+
+    sendMessage({
+      client,
+      code: TransportCode.MESSAGE_SENT,
+      data: {
+        message,
+        messageType: "shout",
+      },
+      initiator: client,
+      initiatorType: "CLIENT",
+    });
   }
 
   public say(client: Client, ...messageChunks: string[]): void {
@@ -88,6 +122,60 @@ export class GameChat extends GameModule {
 
       return;
     }
+
+    const map = this.loadedModules["GameMap"] as GameMap;
+
+    const location = map.MAP_OBJECT.getLocation(
+      client.character.getLocationId()
+    );
+
+    if (!location) {
+      sendMessage({
+        client,
+        code: TransportCode.WRONG_RECIEVER,
+      });
+
+      return;
+    }
+
+    const room = location.getRoom(client.character.getRoomId());
+
+    if (!room) {
+      sendMessage({
+        client,
+        code: TransportCode.WRONG_RECIEVER,
+      });
+
+      return;
+    }
+
+    room.clientsInRoom.forEach((client) => {
+      if (client.character!.characterId === client.character!.characterId) {
+        return;
+      }
+
+      sendMessage({
+        client: client,
+        code: TransportCode.MESSAGE_RECEIVED,
+        data: {
+          message,
+          messageType: "shout",
+        },
+        initiator: client,
+        initiatorType: "CLIENT",
+      });
+    });
+
+    sendMessage({
+      client,
+      code: TransportCode.MESSAGE_SENT,
+      data: {
+        message,
+        messageType: "shout",
+      },
+      initiator: client,
+      initiatorType: "CLIENT",
+    });
   }
 
   public whisper(
@@ -133,6 +221,30 @@ export class GameChat extends GameModule {
       sendMessage({ client, code: TransportCode.WRONG_RECIEVER });
       return;
     }
+
+    sendMessage({
+      client: reciever,
+      code: TransportCode.MESSAGE_RECEIVED,
+      data: {
+        message,
+        character: client.character,
+        messageType: "whisper",
+      },
+      initiator: client,
+      initiatorType: "CLIENT",
+    });
+
+    sendMessage({
+      client,
+      code: TransportCode.MESSAGE_SENT,
+      data: {
+        message,
+        messageType: "whisper",
+        character: client.character,
+      },
+      initiator: client,
+      initiatorType: "CLIENT",
+    });
   }
 
   public me(client: Client, ...messageChunks: string[]): void {
