@@ -65,7 +65,7 @@ export class WebSocketTransport extends TransportModule {
       });
 
       socket.on("message", (message) => {
-        log("DEBUG", `Message from client ${client.connectionId}: ${message}`);
+        log("DEBUG", `Message from client ${client.id}: ${message}`);
 
         if (message.startsWith('"') || message.startsWith("'")) {
           try {
@@ -89,11 +89,11 @@ export class WebSocketTransport extends TransportModule {
 
           log(
             "DEBUG",
-            `Command from client ${this.context.clients.length}: ${command}`
+            `Command from client ${client.id}: ${command}`
           );
           log(
             "DEBUG",
-            `Args from client ${this.context.clients.length}: ${args}`
+            `Args from client ${client.id}: ${args}`
           );
 
           if (this.context.gameServer.modules.moduleCommands[command]) {
@@ -123,6 +123,8 @@ export class WebSocketTransport extends TransportModule {
 
         if (client.character) {
           try {
+            client.character.online = false;
+
             await client.character.update();
           } catch (e) {
             log("ERROR", e.message);

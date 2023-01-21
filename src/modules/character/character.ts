@@ -88,6 +88,9 @@ export class GameCharacter extends GameModule {
 
     client.character = character;
 
+    character.online = true;
+    character.update();
+
     sendMessage({
       client,
       code: TransportCode.SELECTED_CHARACTER,
