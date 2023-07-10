@@ -159,7 +159,7 @@ export class GameChat extends GameModule {
         code: TransportCode.MESSAGE_RECEIVED,
         data: {
           message,
-          messageType: "shout",
+          messageType: "say",
         },
         initiator: client,
         initiatorType: "CLIENT",
@@ -171,7 +171,7 @@ export class GameChat extends GameModule {
       code: TransportCode.MESSAGE_SENT,
       data: {
         message,
-        messageType: "shout",
+        messageType: "say",
       },
       initiator: client,
       initiatorType: "CLIENT",
@@ -227,7 +227,6 @@ export class GameChat extends GameModule {
       code: TransportCode.MESSAGE_RECEIVED,
       data: {
         message,
-        character: client.character,
         messageType: "whisper",
       },
       initiator: client,
@@ -287,7 +286,6 @@ export class GameChat extends GameModule {
         code: TransportCode.MESSAGE_RECEIVED,
         data: {
           message: readyMessage,
-          character: client.character,
           type: "me",
         },
         initiator: client,
@@ -300,7 +298,6 @@ export class GameChat extends GameModule {
       code: TransportCode.MESSAGE_SENT,
       data: {
         message: readyMessage,
-        character: client.character,
         type: "me",
       },
       initiator: client,
