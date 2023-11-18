@@ -1,0 +1,13 @@
+[
+  {
+    "id": 1,
+    "name": "Манекен",
+    "enemy": false,
+    "canFight": true,
+    "description": "Тренировочный манекен",
+    "stats": {
+      "dex": 2
+    },
+    "respawn": 10
+  }
+]
