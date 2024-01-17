@@ -1,1 +1,0 @@
-nodemon --exec \"npm run start:dev\" --ext \"ts,json\"

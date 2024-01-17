@@ -1,1 +1,0 @@
-deno run --config ./deno.json --allow-net --allow-read --allow-write src/main.ts port=5050 tickrate=0.5 showDebug=true showPerfomance=true

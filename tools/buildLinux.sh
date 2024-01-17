@@ -1,1 +1,0 @@
-deno compile --target x86_64-unknown-linux-gnu --config ./deno.json --import-map imports.json --allow-net --allow-read --allow-write --output dist/server src/main.ts

@@ -1,1 +1,0 @@
-deno compile --config ./deno.json --import-map imports.json --allow-net --allow-read --allow-write --output dist/server src/main.ts

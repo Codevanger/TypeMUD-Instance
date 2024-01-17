@@ -3,7 +3,7 @@ import { Context } from "../../utils/types/context.d.ts";
 import {
   Database,
   MySQLConnector,
-} from "https://deno.land/x/denodb@v1.2.0/mod.ts";
+} from "https://deno.land/x/denodb/mod.ts";
 import { log } from "../../utils/functions/log.ts";
 import { DATABASE_MODELS } from "../../utils/classes/database-models.ts";
 

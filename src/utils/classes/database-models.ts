@@ -2,7 +2,7 @@ import {
   DataTypes,
   Model,
   Relationships,
-} from "https://deno.land/x/denodb@v1.2.0/mod.ts";
+} from 'https://deno.land/x/denodb/mod.ts';
 
 export class User extends Model {
   static table = "users";
