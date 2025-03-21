@@ -1,10 +1,12 @@
-import { CoreModule } from "../../utils/classes/module.ts";
-import { Client } from "../../utils/types/client.d.ts";
-import { Context } from "../../utils/types/context.d.ts";
 import { decode, verify } from "https://deno.land/x/djwt@v2.2/mod.ts";
+
+import type { Client } from "../../utils/types/client.d.ts";
+import type { Context } from "../../utils/types/context.d.ts";
+import type { ITokenPayload } from "../../utils/types/token.d.ts";
+
+import { CoreModule } from "../../utils/classes/module.ts";
 import { log } from "../../utils/functions/log.ts";
 import { JWT_SECRET } from "../../utils/consts/secrets.ts";
-import { ITokenPayload } from "../../utils/types/token.d.ts";
 import { TransportCode } from "../../utils/classes/transport-codes.ts";
 import { User } from "../../utils/classes/database-models.ts";
 import { sendMessage } from "../../utils/functions/send-message.ts";
@@ -13,19 +15,19 @@ import { sendMessage } from "../../utils/functions/send-message.ts";
  * Module for authentication
  */
 export class CoreAuth extends CoreModule {
-  public priority = -1;
+  public override priority = -1;
 
-  public commandsToAdd = {
+  public override commandsToAdd = {
     AUTH: this.auth,
   };
 
-  constructor(protected context: Context) {
+  constructor(protected override context: Context) {
     super(context);
 
     this.canLoad();
   }
 
-  public canLoad(): boolean {
+  public override canLoad(): boolean {
     if (this.loadedModulesNames.find((x) => x === "Auth")) {
       throw new Error("Can't load Auth module twice!");
     }
@@ -51,7 +53,7 @@ export class CoreAuth extends CoreModule {
       auth = !!(await verify(token, JWT_SECRET, "HS256"));
     } catch (e) {
       log("DEBUG", `Failed to verify token!`);
-      log("DEBUG", e);
+      log("DEBUG", String(e));
     }
 
     if (auth) {
@@ -59,7 +61,7 @@ export class CoreAuth extends CoreModule {
 
       const user = await User.where("userId", payload.userId).first();
 
-      if (!user || user.username !== payload.username) {
+      if (!user || user["username"] !== payload.username) {
         sendMessage({
           client: client,
           code: TransportCode.INVALID_TOKEN,

@@ -3,7 +3,7 @@ import { Context } from "../../utils/types/context.d.ts";
 import {
   Database,
   MySQLConnector,
-} from "https://deno.land/x/denodb/mod.ts";
+} from "https://deno.land/x/denodb@v1.4.0/mod.ts";
 import { log } from "../../utils/functions/log.ts";
 import { DATABASE_MODELS } from "../../utils/classes/database-models.ts";
 
@@ -11,18 +11,18 @@ import { DATABASE_MODELS } from "../../utils/classes/database-models.ts";
  * Module for database connection
  */
 export class DataBase extends DataModule {
-  public priority = -1;
+  public override priority = -1;
 
   private DB!: Database;
 
-  constructor(protected context: Context) {
+  constructor(protected override context: Context) {
     super(context);
 
     this.canLoad();
     this.initDB();
   }
 
-  public canLoad(): boolean {
+  public override canLoad(): boolean {
     if (this.loadedModulesNames.find((x) => x === "Database")) {
       throw new Error("Can't load Database module twice!");
     }
@@ -55,7 +55,7 @@ export class DataBase extends DataModule {
       this.DB = new Database(connector);
     } catch (e) {
       log("ERROR", "Failed to connect to database!");
-      log("DEBUG", e.message);
+      log("DEBUG", String(e));
     } finally {
       log("SUCCESS", "Database connected!");
     }

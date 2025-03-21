@@ -34,7 +34,7 @@ export class Location {
 
   public get clientsInLocation(): Array<Client> {
     return this.context.clients.filter(
-      (client) => Number(client.character?.location) === this.id
+      (client) => Number(client.character?.["location"]) === this.id
     );
   }
 

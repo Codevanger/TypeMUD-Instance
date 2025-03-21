@@ -9,20 +9,20 @@ import { Context } from "../../utils/types/context.d.ts";
  * Character management module
  */
 export class GameCharacter extends GameModule {
-  public priority = 100;
+  public override priority = 100;
 
-  commandsToAdd = {
+  override commandsToAdd = {
     SELECT: this.select,
     MYCHARACTER: this.myCharacter,
   };
 
-  constructor(protected context: Context) {
+  constructor(protected override context: Context) {
     super(context);
 
     this.canLoad();
   }
 
-  public canLoad(): boolean {
+  public override canLoad(): boolean {
     if (this.loadedModulesNames.find((x) => x === "Map")) {
       throw new Error("Can't load Character module twice!");
     }
@@ -71,7 +71,7 @@ export class GameCharacter extends GameModule {
       return;
     }
 
-    if (character.userId !== client.id) {
+    if (character["userId"] !== client.id) {
       sendMessage({
         client,
         code: TransportCode.INVALID_USER,
@@ -88,7 +88,7 @@ export class GameCharacter extends GameModule {
 
     client.character = character;
 
-    character.online = true;
+    character["online"] = true;
     character.update();
 
     sendMessage({

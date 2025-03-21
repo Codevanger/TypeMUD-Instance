@@ -2,21 +2,21 @@ import { GameModule } from "../../utils/classes/module.ts";
 import { Context } from "../../utils/types/context.d.ts";
 
 export class GameInventory extends GameModule {
-  public commandsToAdd = {
+  public override commandsToAdd = {
     INVENTORY: this.getInventory,
     ADDITEM: this.addItem,
     DROPITEM: this.dropItem,
     GIMEITEM: this.giveItem,
   };
 
-  constructor(protected context: Context) {
+  constructor(protected override context: Context) {
     super(context);
 
     this.canLoad();
     this.initItems();
   }
 
-  public canLoad(): boolean {
+  public override canLoad(): boolean {
     if (this.loadedModulesNames.find((x) => x === "GameInventory")) {
       throw new Error("Can't load GameInventory module twice!");
     }

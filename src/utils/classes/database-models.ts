@@ -5,9 +5,9 @@ import {
 } from 'https://deno.land/x/denodb/mod.ts';
 
 export class User extends Model {
-  static table = "users";
+  static override table = "users";
 
-  static fields = {
+  static override fields = {
     userId: {
       type: DataTypes.INTEGER,
       primaryKey: true,
@@ -41,9 +41,9 @@ export class User extends Model {
 }
 
 export class Instance extends Model {
-  static table = "instances";
+  static override table = "instances";
 
-  static fields = {
+  static override fields = {
     instanceId: {
       primaryKey: true,
       autoIncrement: true,
@@ -68,9 +68,9 @@ export class Instance extends Model {
 }
 
 export class Character extends Model {
-  static table = "characters";
+  static override table = "characters";
 
-  static fields = {
+  static override fields = {
     characterId: {
       primaryKey: true,
       autoIncrement: true,
@@ -163,19 +163,19 @@ export class Character extends Model {
   }
 
   public getFriends(): number[] {
-    return JSON.parse(this.friends as string);
+    return JSON.parse(this["friends"] as string);
   }
 
   public getLocationId(): number {
-    return Number(this.location);
+    return Number(this["location"]);
   }
 
   public getRoomId(): number {
-    return Number(this.room);
+    return Number(this["room"]);
   }
 
   public getParsedStats(): { [key: string]: number } {
-    return JSON.parse(this.stats as string);
+    return JSON.parse(this["stats"] as string);
   }
 
   public getStat(stat: string): number {

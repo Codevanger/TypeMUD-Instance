@@ -5,5 +5,26 @@
         "build:windows": "deno compile --config ./deno.json --allow-net --allow-read --allow-write --output dist/server src/main.ts",
         "build:linux": "deno compile --target x86_64-unknown-linux-gnu --config ./deno.json --allow-net --allow-read --allow-write --output dist/server src/main.ts"
     },
-    "importMap": "./imports.json"
+    "importMap": "./imports.json",
+    "compilerOptions": {
+      "strict": true,
+      "noImplicitOverride": true,
+      "noPropertyAccessFromIndexSignature": true,
+      "noImplicitReturns": true,
+      "strictNullChecks": false,
+      "noImplicitAny": false,
+      "strictBindCallApply": false,
+      "noFallthroughCasesInSwitch": false,
+      "lib": [
+        "es2020",
+        "deno.ns",
+        "dom"
+      ],
+      "types": [
+        "node"
+      ]
+    },
+    "unstable": [
+      "sloppy-imports"
+    ]
 }

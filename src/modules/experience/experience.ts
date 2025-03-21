@@ -1,17 +1,16 @@
 import { GameModule } from "../../utils/classes/module.ts";
 import { TransportCode } from "../../utils/classes/transport-codes.ts";
 import { sendMessage } from "../../utils/functions/send-message.ts";
-import { Client } from "../../utils/types/client.d.ts";
 import { Context } from "../../utils/types/context.d.ts";
 
 export class GameExperience extends GameModule {
-  constructor(protected context: Context) {
+  constructor(protected override context: Context) {
     super(context);
 
     this.canLoad();
   }
 
-  public canLoad(): boolean {
+  public override canLoad(): boolean {
     if (this.loadedModulesNames.find((x) => x === "GameExperience")) {
       throw new Error("Can't load GameExperience module twice!");
     }
@@ -21,7 +20,7 @@ export class GameExperience extends GameModule {
     return true;
   }
 
-  public onServerIteration = (): void => {
+  public override onServerIteration = (): void => {
     if (this.context.clients.length <= 0) {
       return;
     }
@@ -32,12 +31,12 @@ export class GameExperience extends GameModule {
       }
 
       if (
-        +client.character.experience! >=
-        this.getExperienceForLevel(+client.character.level!)
+        +client.character["experience"]! >=
+        this.getExperienceForLevel(+client.character["level"]!)
       ) {
-        client.character.level = +client.character.level! + 1;
-        client.character.experience = 0;
-        client.character.freePoints = +client.character.freePoints! + 3;
+        client.character["level"] = +client.character["level"]! + 1;
+        client.character["experience"] = 0;
+        client.character["freePoints"] = +client.character["freePoints"]! + 3;
 
         sendMessage({
           client,

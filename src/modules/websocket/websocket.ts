@@ -9,10 +9,10 @@ import { DataBase } from "../database/database.ts";
 
 export class WebSocketTransport extends TransportModule {
   private wsServer!: WebSocketServer;
-  public priority: Priority = 0;
+  public override priority: Priority = 0;
   public dependencies = [DataBase];
 
-  constructor(protected context: Context) {
+  constructor(protected override context: Context) {
     super(context);
 
     this.canLoad();
@@ -20,7 +20,7 @@ export class WebSocketTransport extends TransportModule {
     this.initWebSocketServer();
   }
 
-  public canLoad(): boolean {
+  public override canLoad(): boolean {
     if (this.loadedModulesNames.find((x) => x === "WebSocketTransport")) {
       throw new Error("Can't load WebSocketTransport module twice!");
     }
@@ -35,7 +35,7 @@ export class WebSocketTransport extends TransportModule {
       this.wsServer = new WebSocketServer(this.context.params?.port);
     } catch (e) {
       log("ERROR", "Can't start WebSocket server!");
-      log("ERROR", e.message);
+      log("ERROR", String(e));
 
       throw new Error("Can't start WebSocket server!");
     }
@@ -72,7 +72,7 @@ export class WebSocketTransport extends TransportModule {
             message = JSON.parse(message);
           } catch (e) {
             log("ERROR", "Can't parse message!");
-            log("ERROR", e.message);
+            log("ERROR", String(e));
 
             sendMessage({
               client: client,
@@ -123,11 +123,11 @@ export class WebSocketTransport extends TransportModule {
 
         if (client.character) {
           try {
-            client.character.online = false;
+            client.character["online"] = false;
 
             await client.character.update();
           } catch (e) {
-            log("ERROR", e.message);
+            log("ERROR", String(e));
             log("ERROR", "Error while saving character data!");
           }
 
@@ -142,7 +142,7 @@ export class WebSocketTransport extends TransportModule {
           try {
             await client.user.update();
           } catch (e) {
-            log("ERROR", e.message);
+            log("ERROR", String(e));
             log("ERROR", "Error while saving user data!");
           }
         }

@@ -7,16 +7,16 @@ import { Context } from "../../utils/types/context.d.ts";
  * Web server module.
  */
 export class CoreHttp extends CoreModule {
-  public priority = 100;
+  public override priority = 100;
 
-  constructor(protected context: Context) {
+  constructor(protected override context: Context) {
     super(context);
 
     this.canLoad();
     this.initHttpServer();
   }
 
-  public canLoad(): boolean {
+  public override canLoad(): boolean {
     if (this.loadedModulesNames.find((x) => x === "Web")) {
       throw new Error("Can't load Web module twice!");
     }
@@ -38,7 +38,7 @@ export class CoreHttp extends CoreModule {
       log("DEBUG", `HTTP server started`);
     } catch (error) {
       log("ERROR", `Failed to start HTTP server!`);
-      log("ERROR", error);
+      log("ERROR", String(error));
     }
   }
 

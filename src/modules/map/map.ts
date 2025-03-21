@@ -12,22 +12,22 @@ import { sendMessage } from "../../utils/functions/send-message.ts";
  * Map module
  */
 export class GameMap extends CoreModule {
-  public priority = 0;
+  public override priority = 0;
   public MAP_OBJECT!: Map;
 
-  public commandsToAdd = {
+  public override commandsToAdd = {
     CURRENTLOCATION: this.getCurrentLocation,
     MOVE: this.moveCharacter,
   };
 
-  constructor(protected context: Context) {
+  constructor(protected override context: Context) {
     super(context);
 
     this.canLoad();
     this.initMap();
   }
 
-  public canLoad(): boolean {
+  public override canLoad(): boolean {
     if (this.loadedModulesNames.find((x) => x === "GameMap")) {
       throw new Error("Can't load GameMap module twice!");
     }
@@ -60,15 +60,15 @@ export class GameMap extends CoreModule {
     this.MAP_OBJECT = new Map(map, locations, rooms, this.context);
   }
 
-  public onCharacterLogin = (client: Client, character: Character): void => {
-    if (!character.location || character.location === 0) {
-      character.location = this.MAP_OBJECT.bootstrap;
+  public override onCharacterLogin = (client: Client, character: Character): void => {
+    if (!character["location"] || character["location"] === 0) {
+      character["location"] = this.MAP_OBJECT.bootstrap;
     }
 
     const location = this.MAP_OBJECT.getLocation(character.getLocationId());
 
-    if (!character.room || character.room === 0) {
-      character.room = location.bootstrap;
+    if (!character["room"] || character["room"] === 0) {
+      character["room"] = location.bootstrap;
     }
 
     const room = location.getRoom(character.getRoomId());
@@ -96,10 +96,10 @@ export class GameMap extends CoreModule {
     });
   };
 
-  public onCharacterLogout = (client: Client, character: Character): void => {
+  public override onCharacterLogout = (client: Client, character: Character): void => {
     const room = this.MAP_OBJECT.getLocation(
-      character.location as number
-    ).getRoom(character.room as number);
+      character["location"] as number
+    ).getRoom(character["room"] as number);
 
     if (!location) {
       return;
@@ -207,8 +207,8 @@ export class GameMap extends CoreModule {
       return;
     }
 
-    character!.room = exit.roomId;
-    character!.location = exit.locationId;
+    character!["room"] = exit.roomId;
+    character!["location"] = exit.locationId;
 
     character!.update();
 

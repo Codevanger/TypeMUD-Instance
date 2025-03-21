@@ -6,8 +6,8 @@ import { Context } from "../../utils/types/context.d.ts";
 import { GameMap } from "../map/map.ts";
 
 export class GameChat extends GameModule {
-  public priority = 0;
-  public commandsToAdd = {
+  public override priority = 0;
+  public override commandsToAdd = {
     SAY: this.say,
     SHOUT: this.shout,
     WHISPER: this.whisper,
@@ -16,13 +16,13 @@ export class GameChat extends GameModule {
 
   public dependencies = [GameMap];
 
-  constructor(protected context: Context) {
+  constructor(protected override context: Context) {
     super(context);
 
     this.canLoad();
   }
 
-  public canLoad(): boolean {
+  public override canLoad(): boolean {
     if (this.loadedModulesNames.find((x) => x === "Chat")) {
       throw new Error("Can't load Chat module twice!");
     }
@@ -69,7 +69,7 @@ export class GameChat extends GameModule {
     }
 
     location.clientsInLocation.forEach((client) => {
-      if (client.character!.characterId === client.character!.characterId) {
+      if (client.character!["characterId"] === client.character!["characterId"]) {
         return;
       }
 
@@ -150,7 +150,7 @@ export class GameChat extends GameModule {
     }
 
     room.clientsInRoom.forEach((client) => {
-      if (client.character!.characterId === client.character!.characterId) {
+      if (client.character!["characterId"] === client.character!["characterId"]) {
         return;
       }
 
@@ -208,13 +208,13 @@ export class GameChat extends GameModule {
       return;
     }
 
-    if (characterName === client.character.name || characterName.length <= 1) {
+    if (characterName === client.character["name"] || characterName.length <= 1) {
       sendMessage({ client, code: TransportCode.WRONG_RECIEVER });
       return;
     }
 
     const reciever = this.context.clients.find(
-      (x) => x.character?.name === characterName
+      (x) => x.character?.["name"] === characterName
     );
 
     if (!reciever) {
@@ -272,12 +272,12 @@ export class GameChat extends GameModule {
       return;
     }
 
-    const readyMessage = `${client.character.name} ${message}`;
+    const readyMessage = `${client.character["name"]} ${message}`;
 
     const mapModule = this.loadedModules["GameMap"] as GameMap;
 
     mapModule.MAP_OBJECT.getLocation(
-      client.character!.location as number
+      client.character!["location"] as number
     ).clientsInLocation.forEach((x) => {
       if (x.id === client.id) return;
 

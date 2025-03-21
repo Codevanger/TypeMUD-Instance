@@ -1,3 +1,4 @@
+// deno-lint-ignore-file ban-types
 import { log } from "../functions/log.ts";
 import { Client } from "../types/client.d.ts";
 import { Context } from "../types/context.d.ts";

@@ -52,6 +52,7 @@ export const VOID_ROOM: IRoom = {
       direction: "NW",
     },
   ],
+  entities: []
 };
 
 export class Room {
@@ -85,7 +86,7 @@ export class Room {
 
   public get clientsInRoom(): Array<Client> {
     return this.context.clients.filter(
-      (client) => Number(client.character?.location) === this.locationId
+      (client) => Number(client.character?.["location"]) === this.locationId
     );
   }
 

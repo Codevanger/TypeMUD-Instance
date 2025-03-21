@@ -1,3 +1,4 @@
+// deno-lint-ignore-file ban-types
 import { MODULES_TO_LOAD } from "../consts/modules-to-load.ts";
 import { log } from "../functions/log.ts";
 import { checkPerfomance } from "../functions/perfomance.ts";
@@ -100,7 +101,7 @@ export class ServerModules {
         }
       } catch (error) {
         log("ERROR", `Module ${module.name} loading error!`);
-        log("ERROR", error);
+        log("ERROR", String(error));
 
         return;
       }
