@@ -1,6 +1,6 @@
 {
     "tasks": {
-        "start": "deno run --config ./deno.json --allow-net --allow-read --allow-write src/main.ts port=5050 tickrate=0.5 showDebug=true showPerfomance=true",
+        "start": "deno run --config ./deno.json --allow-net --allow-import  --allow-read --allow-write src/main.ts port=5050 tickrate=0.5 showDebug=true showPerfomance=true",
         "start:nodemon": "nodemon --exec \"npm run start:dev\" --ext \"ts,json\"",
         "build:windows": "deno compile --config ./deno.json --allow-net --allow-read --allow-write --output dist/server src/main.ts",
         "build:linux": "deno compile --target x86_64-unknown-linux-gnu --config ./deno.json --allow-net --allow-read --allow-write --output dist/server src/main.ts"
